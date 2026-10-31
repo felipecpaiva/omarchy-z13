@@ -1,0 +1,114 @@
+# Plan
+
+Nothing in here has been done yet unless it says so. Owner: Felipe Paiva. Last updated 2026-10-31.
+
+## Rules for this plan
+
+- One change at a time. Keep it or roll it back before the next.
+- Stay on the stable Omarchy channel (4.0.6). Revisit when 4.5 final ships. Moving to the RC channel is
+  an open decision, see the end.
+- Read third-party code before installing it. Two of the tools run a build or a background service.
+- Nothing goes upstream without a yes from the owner.
+
+## Track 1: this machine
+
+### Step 0, baseline (before any change)
+
+- Copy `~/.config/hypr` and `~/.config/omarchy` to a dated folder.
+- Save the output of `omarchy plugin list`.
+- Note the working state: touchscreen taps land correctly, the keyboard works, suspend and resume work.
+
+### Step 1, read the plugin
+
+Read `bin/tablet-mode`, `systemd/omarchy-tablet-mode.service`, `Widget.qml`, and the three `wvkbd`
+patches plus the `PKGBUILD` in `packaging/wvkbd-deskus`. Look for anything that writes outside its own
+folders, runs as root, or fetches code at run time. The setup step asks for the sudo password and builds
+from source, so this step is not optional.
+
+### Step 2, install the plugin with rotation off
+
+```bash
+omarchy plugin add https://github.com/AlanRoman117/omarchy-tablet-mode-asus-rog-flow-z13.git --enable
+```
+
+Before the first detach, set `auto_rotate=false` in `~/.config/omarchy/tablet-mode.conf` and restart the
+service with `systemctl --user restart omarchy-tablet-mode`. This keeps the first test free of rotation.
+
+Checks (write down pass or fail for each):
+
+1. Detach: keyboard shows, the screen does not turn, a notification says tablet mode.
+2. Touch tweaks apply (wider gaps) and `touch_tweaks=false` turns them off.
+3. Reattach: keyboard hides, gaps return.
+4. Typing works in a terminal and in a browser text field.
+5. Suspend with the keyboard detached, then resume. The author says an early version hung a Z13 here
+   once, so test this early and with nothing unsaved open.
+6. `tablet-mode doctor` reports clean.
+7. `tablet-mode disable --full` followed by `tablet-mode doctor --full` proves everything is undone.
+
+Rollback: `tablet-mode uninstall --packages`, then `omarchy plugin remove alanroman117.tablet-mode`.
+
+### Step 3, decide how rotation should work
+
+The goal: the screen can rotate by itself, but detaching the keyboard must not be what switches it on.
+
+| Option | How | Cost |
+|---|---|---|
+| A | Edit the plugin script so the daemon starts with `LOCK=true`. Detach then never rotates. A tap on the lock (or a chosen angle) in the bar card turns it on. | A plugin update overwrites the edit. Note the edit in this repo. |
+| B | Leave the plugin as is. Tap the lock after every login. | Easy to forget. |
+| C | Wait for Omarchy 4.5 final and use its own rotation lock, keep only the keyboard from the plugin. | Waiting. Rotation in 4.5 is not merged yet. |
+
+Current leaning: A or B while on 4.0.6, then C when 4.5 ships. Undecided until Step 2 is tested.
+
+### Step 4, when 4.5 final ships
+
+- Read its release notes for rotation, keyboard and touch changes.
+- Update. Check that the plugin's rotation does not fight Omarchy's rotation. If it does, set
+  `auto_rotate=false` in the plugin and keep only the keyboard.
+- Re-check the `ShellIpc` plugins that did not load on 4.0.6 (a separate issue, not about touch).
+
+### Tweaks already applied on this machine (not touch related, `[tested here]`)
+
+These are generic Z13 settings that worked. Other guides cover the same ground, so this is a record.
+
+1. **Power profile follows the charger.** `/etc/udev/rules.d/99-z13-power-profile.rules`:
+
+   ```
+   SUBSYSTEM=="power_supply", KERNEL=="AC0", ATTR{online}=="1", RUN+="/usr/bin/powerprofilesctl set performance"
+   SUBSYSTEM=="power_supply", KERNEL=="AC0", ATTR{online}=="0", RUN+="/usr/bin/powerprofilesctl set balanced"
+   ```
+
+   It runs only when the cable is plugged or unplugged. After a reboot the profile stays at Omarchy's
+   default. Undo: delete the file and run `sudo udevadm control --reload`.
+
+2. **GPU memory: small fixed block, large borrowable pool.** BIOS UMA frame buffer on `Auto` gave 512 MiB
+   of fixed video memory. Kernel parameter `ttm.pages_limit=12582912` (48 GiB ceiling, not a reservation)
+   through `/etc/limine-entry-tool.d/gpu-memory.conf`, then `sudo limine-update` and a reboot. Checked
+   with `/sys/module/ttm/parameters/pages_limit` and `/sys/class/drm/card*/device/mem_info_gtt_total`.
+   Not tested with a large local model yet. If the GPU runs out of memory, raise the ceiling.
+
+3. **Launcher gotcha.** Omarchy's launcher hides desktop ids listed in
+   `/usr/share/omarchy/default/omarchy/launcher.hides`, and the id is the file name. A `btop.desktop` file
+   never shows up. Give the file another name, keep `Name=btop`, then run `omarchy-restart-shell`.
+
+## Track 2: what I want to send upstream (nothing filed yet)
+
+Each item needs a yes from the owner before I post it.
+
+| # | Where | What | Needs first |
+|---|---|---|---|
+| 1 | Alan's plugin repo | Issue: ask for a setting that starts the plugin locked, or separates rotation from detaching the keyboard. Mention the `LOCK=false` start and the `sensor_sync` condition. | Step 2 results |
+| 2 | Alan's plugin repo | Z13 hardware report: what worked on a second Z13, including the suspend test. | Step 2 results |
+| 3 | `omacom/omarchy` #9029 and #9757 | Comment with a test on a Z13 and `wvkbd` (does the menu close on the first tap, does the fix help). | A test with the plugin installed |
+| 4 | `omacom/omarchy` #13531 or #7493 | Test the PR on the Z13 and report. The Z13 has no tablet switch and a USB-detach keyboard, which is a useful case for the rotation daemon. | Step 2 done, a separate branch checkout |
+| 5 | This repo | Keep the research current. Add a Z13 hardware report issue template if others start filing. | Nothing |
+
+Workspace rule: a PR branch lives in `~/contrib/<repo>`, not in a submodule, and every filed item goes
+into the workspace's contributions list.
+
+## Open decisions
+
+1. Rotation option A, B or C (above).
+2. Stay on the stable channel, or try the 4.5 RC channel on this machine. The RC could break things, and
+   I lean towards waiting for final.
+3. Whether to try `ragtop` after the Z13 plugin. It needs a tablet switch the Z13 lacks, so it would run
+   in its manual "Always On" mode.
