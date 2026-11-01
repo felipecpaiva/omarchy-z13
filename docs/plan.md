@@ -12,6 +12,22 @@ Nothing in here has been done yet unless it says so. Owner: Felipe Paiva. Last u
 
 ## Track 1: this machine
 
+**Main path: the minimal design in [minimal.md](minimal.md).** Use what Omarchy and Hyprland already
+have, add one package (an on-screen keyboard), no plugin, no rotation code. It needs the detach tests in
+that file first.
+
+**Fallback: Alan's Z13 plugin**, steps 1 to 4 below. Use it if the minimal path cannot detect the detach
+or the keyboard cannot be made to work. Do not run both at once.
+
+Order of work for the main path:
+
+1. Detach tests (minimal.md tests 1 and 2): **done 2026-11-01.** Hyprland hears the detach through a
+   switch bind, so no watcher is needed.
+2. Test the touch swipe (test 3).
+3. Build `wvkbd` and test show and hide by signal (test 4).
+4. Write the static tablet file and the menu entry, then test detach, attach and suspend (tests 5 and 6).
+5. Record what worked in this repo.
+
 ### Step 0, baseline (before any change)
 
 - Copy `~/.config/hypr` and `~/.config/omarchy` to a dated folder.

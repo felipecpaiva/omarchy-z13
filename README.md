@@ -18,6 +18,11 @@ only seen in a search result.
 - **That plugin turns rotation on at the moment you detach the keyboard.** Read from its source: the
   rotation lock starts off every time the service starts, and the sensor reader runs whenever tablet
   mode is on and the lock is off. There is no setting to separate the two.
+- **The detach is visible to Hyprland with no extra software.** The Z13's `Asus WMI hotkeys` device
+  carries a tablet-mode switch, and a Hyprland bind on it fired on detach and again on attach (tested
+  once, on kernel 7.2.8 and Hyprland 0.56.2). One KDE project reports the opposite for the same model, so
+  firmware or kernel versions may differ. That makes a small route possible: two binds, one static
+  settings file, and one on-screen keyboard package. See [docs/minimal.md](docs/minimal.md).
 - **Omarchy 4.5 has two open pull requests for rotation** ([#13531](https://github.com/omacom/omarchy/pull/13531)
   and [#7493](https://github.com/omacom/omarchy/pull/7493)). Both follow the sensor all the time with a
   lock, like a phone. Neither ties rotation to the keyboard. Neither adds an on-screen keyboard.
@@ -30,6 +35,7 @@ only seen in a search result.
 | File | What it holds |
 |---|---|
 | [docs/research.md](docs/research.md) | Findings, tool comparison, upstream status, sources, and what I could not find |
+| [docs/minimal.md](docs/minimal.md) | A design for tablet mode with one new package, no plugin and no rotation code, built on what Omarchy already has. Not built yet. |
 | [docs/plan.md](docs/plan.md) | What I will do on this machine, step by step with rollback, plus what I want to send upstream |
 
 No scripts yet. I will add one only after it has run on a real Z13.
