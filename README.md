@@ -4,9 +4,10 @@ Omarchy has no tablet mode yet. On the ASUS ROG Flow Z13 you can build one from 
 Omarchy 4.5 will add some of it. This repo tracks what exists, what is coming, and what I am doing on
 my own Z13.
 
-Status: research written 2026-10-31, nothing here is a finished guide yet. Every claim in
-[docs/research.md](docs/research.md) says how I checked it: read from source, tested on my machine, or
-only seen in a search result.
+Status as of 2026-11-01: research and design only. **No tablet software is installed on the Z13 yet**,
+and nothing here is a finished guide. Every claim says how I checked it: tested on my machine, read from
+source, or only seen in a search result. To pick the work up again, start at the "Where we stopped"
+section of [docs/plan.md](docs/plan.md).
 
 ## The short version
 
@@ -29,6 +30,15 @@ only seen in a search result.
 - **Touch users hit real bugs today:** the Omarchy menu and bar pop-ups close when you tap an on-screen
   keyboard ([#9029](https://github.com/omacom/omarchy/issues/9029),
   [#9756](https://github.com/omacom/omarchy/issues/9756)), and the lock screen needs the real keyboard.
+- **The lock screen is the hard part.** The session lock hides every window, so no keyboard plugin can
+  appear on it. Only ragtop reaches it, by copying and patching Omarchy's lock plugin. I posted a proposal
+  to Omarchy on 2026-11-01 for a lock screen keyboard and then a PIN
+  ([#17222](https://github.com/omacom/omarchy/discussions/17222)). See
+  [docs/lock-screen.md](docs/lock-screen.md) and [docs/upstream.md](docs/upstream.md).
+- **Face login is not in Omarchy.** The Z13's IR camera is visible to Linux. Several community tools
+  exist. Nothing is tried yet. See [docs/face-unlock.md](docs/face-unlock.md).
+- **The boot password cannot be typed on glass.** It is the disk password, asked before any desktop
+  exists. Attach the keyboard to power on. See section 10 of [docs/research.md](docs/research.md).
 
 ## What is in here
 
@@ -37,7 +47,12 @@ only seen in a search result.
 | [docs/research.md](docs/research.md) | Findings, tool comparison, upstream status, sources, and what I could not find |
 | [docs/minimal.md](docs/minimal.md) | A design for tablet mode with one new package, no plugin and no rotation code, built on what Omarchy already has. Not built yet. |
 | [docs/evaluation.md](docs/evaluation.md) | The native route against ragtop, Alan's plugin and the yeutterg set: functions, toggles, resource cost, a measurement protocol, and the two questions that decide the path |
-| [docs/plan.md](docs/plan.md) | What I will do on this machine, step by step with rollback, plus what I want to send upstream |
+| [docs/ragtop-review.md](docs/ragtop-review.md) | A reading of ragtop's code at one commit: what looked good, what to watch, how to trial it safely |
+| [docs/lock-screen.md](docs/lock-screen.md) | The lock screen problem, what Omarchy's lock plugin offers, and the options with effort and safety |
+| [docs/face-unlock.md](docs/face-unlock.md) | Face login on Omarchy and the Z13's IR camera |
+| [docs/upstream.md](docs/upstream.md) | How Omarchy takes changes, what I sent, what I watch, what comes next |
+| [docs/upstream-proposal.md](docs/upstream-proposal.md) | The proposal text exactly as posted |
+| [docs/plan.md](docs/plan.md) | Where I stopped, what to do next on this machine with rollback, and the upstream track |
 
 No scripts yet. I will add one only after it has run on a real Z13.
 

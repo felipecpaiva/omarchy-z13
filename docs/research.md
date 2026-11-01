@@ -137,3 +137,38 @@ GitHub search through the `gh` command line for repositories, issues and pull re
 guides and forums. Plugin READMEs and `bin/tablet-mode` read through the GitHub API. The three plugin
 manifests I opened do not mention `ShellIpc`, but I only scanned the first 30 `.qml` and `.json` files of
 each repo, so treat "none use it" as unproven.
+
+## 10. The boot password (known limit, `[tested here]` unless marked)
+
+Added 2026-11-01. The password asked when the Z13 starts is the disk encryption password. It opens the
+disk. It does not log a user in.
+
+- The disk is LUKS on `nvme0n1p2`. The initramfs uses the older `encrypt` hook (the effective hook list
+  is `base udev plymouth keyboard autodetect microcode modconf kms keymap consolefont block encrypt
+  filesystems fsck btrfs-overlayfs resume`, and the kernel command line has `cryptdevice=`). Omarchy
+  owns that file (`/etc/mkinitcpio.conf.d/omarchy_hooks.conf`).
+- SDDM autologin is on. After the disk opens, the session starts by itself. So the disk password is the
+  only password at boot. The lock screen appears later, on idle or lock.
+- It is asked before the desktop exists, so no on-screen keyboard can run there. A Z13 with its keyboard
+  off cannot be started from cold. Attach the keyboard to power on, then detach it.
+- A TPM2 chip is present (`/dev/tpmrm0`, `tpm_crb_acpi`), so the disk could unlock itself. Three catches:
+  TPM unlock needs the systemd initramfs (`sd-encrypt`), not `encrypt`. Secure Boot is disabled, so TPM
+  unlock would give the session to anyone who powers the machine on. And Omarchy has FIDO2 and fingerprint
+  setup scripts but no TPM one.
+- FIDO2 unlock of the disk has the same `sd-encrypt` requirement and needs a hardware key. `libfido2`
+  is not installed here.
+- A TPM or FIDO2 option for the disk is a separate request with a separate risk discussion. It is not part
+  of the lock screen proposal in [upstream.md](upstream.md).
+
+## 11. Where the other findings live
+
+| Topic | File |
+|---|---|
+| Native route design, detach switch test, fcitx5 keyboard channel | [minimal.md](minimal.md) |
+| Native route against plugins, resource baseline and measurement protocol | [evaluation.md](evaluation.md) |
+| Code review of ragtop | [ragtop-review.md](ragtop-review.md) |
+| Lock screen: problem, lock plugin facts, options, effort | [lock-screen.md](lock-screen.md) |
+| Face login and the Z13 IR camera | [face-unlock.md](face-unlock.md) |
+| How Omarchy takes changes, what was posted, what is watched | [upstream.md](upstream.md) |
+| The post as sent | [upstream-proposal.md](upstream-proposal.md) |
+| What to do next | [plan.md](plan.md) |

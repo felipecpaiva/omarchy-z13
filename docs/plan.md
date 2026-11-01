@@ -1,6 +1,45 @@
 # Plan
 
-Nothing in here has been done yet unless it says so. Owner: Felipe Paiva. Last updated 2026-10-31.
+Nothing in here has been done yet unless it says so. Owner: Felipe Paiva. Last updated 2026-11-01.
+
+## Where we stopped (2026-11-01)
+
+Everything below is research and design. **No tablet software has been installed on the Z13 yet.**
+
+Done:
+
+- Research on the community tools, Omarchy 4.5, and the Hyprland and fcitx5 pieces ([research.md](research.md)).
+- A design for a native route with one new package ([minimal.md](minimal.md)).
+- One live test: a Hyprland bind on the `Asus WMI hotkeys` switch fires on detach and attach.
+- A comparison of the native route and the plugins, with a measurement protocol ([evaluation.md](evaluation.md)).
+- A code review of ragtop at commit `1ffb2cc` ([ragtop-review.md](ragtop-review.md)).
+- Lock screen analysis and options ([lock-screen.md](lock-screen.md)), face login research
+  ([face-unlock.md](face-unlock.md)), and the boot password limit ([research.md](research.md) section 10).
+- A proposal posted to Omarchy, #17222 ([upstream.md](upstream.md), [upstream-proposal.md](upstream-proposal.md)).
+
+Answered by the owner:
+
+- Typing on the lock screen without reattaching the keyboard **is required** (2026-11-01).
+- Face login is queued behind the lock screen keyboard.
+- The fully patched copy of ragtop is not wanted as is. Taking only its lock keyboard is the preferred
+  fallback.
+
+Waiting:
+
+- A reply from Omarchy on #17222. The owner decides on 2026-11-15 whether to build the lock keyboard
+  without one.
+- The owner's answer on whether copies of Omarchy's overlays and a root udev rule are acceptable (the
+  second question in [evaluation.md](evaluation.md)). It only matters if ragtop is trialled.
+
+Next, in order, when work resumes:
+
+1. Step 0, the baseline backup and the resource baseline protocol.
+2. Test the touch swipe and the fcitx5 keyboard channel (minimal.md tests 3 and 4).
+3. Build `wvkbd` for show and hide, then the static tablet file and the menu toggles.
+4. Trial ragtop's lock screen copy only if upstream stays silent, after the staged steps in
+   [ragtop-review.md](ragtop-review.md), or build the smaller lock keyboard copy
+   ([lock-screen.md](lock-screen.md), option 3).
+5. Face login, last.
 
 ## Rules for this plan
 
@@ -12,10 +51,13 @@ Nothing in here has been done yet unless it says so. Owner: Felipe Paiva. Last u
 
 ## Track 1: this machine
 
-**Which path wins is not settled.** [evaluation.md](evaluation.md) compares the native route with the
-plugins and names the two questions that decide it (lock-screen typing, and whether patched Omarchy
-overlays and a root udev rule are acceptable). The text below assumes the native route until those are
-answered.
+**Which path wins is not fully settled.** [evaluation.md](evaluation.md) compares the native route with
+the plugins and names the two questions that decide it. Question one is answered: typing on the lock
+screen is required. That means the native route alone is not enough, and the lock screen needs either
+Omarchy to add it (the posted proposal), a minimal copy of ragtop's lock keyboard, or ragtop itself
+([lock-screen.md](lock-screen.md)). Question two (patched Omarchy overlays and a root udev rule) is
+explained and not yet answered. The text below assumes the native route for everything except the lock
+screen.
 
 **Main path: the minimal design in [minimal.md](minimal.md).** Use what Omarchy and Hyprland already
 have, add one package (an on-screen keyboard), no plugin, no rotation code. It needs the detach tests in
@@ -111,16 +153,19 @@ These are generic Z13 settings that worked. Other guides cover the same ground, 
    `/usr/share/omarchy/default/omarchy/launcher.hides`, and the id is the file name. A `btop.desktop` file
    never shows up. Give the file another name, keep `Name=btop`, then run `omarchy-restart-shell`.
 
-## Track 2: what I want to send upstream (nothing filed yet)
+## Track 2: what we send upstream
 
-Each item needs a yes from the owner before I post it.
+Each item needs a yes from the owner before it is posted. How Omarchy handles proposals and the full
+status are in [upstream.md](upstream.md).
 
 | # | Where | What | Needs first |
 |---|---|---|---|
+| 0 | `omacom/omarchy` discussion #17222 | **Posted 2026-11-01.** Lock screen keyboard for detachables, then a PIN. Pointer comments left on #9600 and #14341. Decision date 2026-11-15. | Done, waiting for a reply |
+| 0b | `omacom/omarchy` discussion #15977 | A comment linking #17222, since its author asks for a hook for extra login methods, the same hook as shape (b). | The owner's yes |
 | 1 | Alan's plugin repo | Issue: ask for a setting that starts the plugin locked, or separates rotation from detaching the keyboard. Mention the `LOCK=false` start and the `sensor_sync` condition. | Step 2 results |
 | 2 | Alan's plugin repo | Z13 hardware report: what worked on a second Z13, including the suspend test. | Step 2 results |
 | 3 | `omacom/omarchy` #9029 and #9757 | Comment with a test on a Z13 and `wvkbd` (does the menu close on the first tap, does the fix help). | A test with the plugin installed |
-| 4 | `omacom/omarchy` #13531 or #7493 | Test the PR on the Z13 and report. The Z13 has no tablet switch and a USB-detach keyboard, which is a useful case for the rotation daemon. | Step 2 done, a separate branch checkout |
+| 4 | `omacom/omarchy` #13531 or #7493 | Test the PR on the Z13 and report. The Z13's tablet switch is on the `Asus WMI hotkeys` device and its keyboard is a USB device that detaches, which is a useful case for the rotation daemon. | Step 2 done, a separate branch checkout |
 | 5 | This repo | Keep the research current. Add a Z13 hardware report issue template if others start filing. | Nothing |
 
 Workspace rule: a PR branch lives in `~/contrib/<repo>`, not in a submodule, and every filed item goes
@@ -131,6 +176,9 @@ into the workspace's contributions list.
 1. Rotation option A, B or C (above).
 2. Stay on the stable channel, or try the 4.5 RC channel on this machine. The RC could break things, and
    I lean towards waiting for final.
-3. Whether to trial `ragtop`. The Z13's tablet switch works (see [minimal.md](minimal.md)), so ragtop's
-   automatic mode should apply. [evaluation.md](evaluation.md) compares it with the native route and
-   says what decides between them.
+3. Whether to trial `ragtop`, and in what form. Lock screen typing is required, so ragtop's lock
+   keyboard matters. The review is in [ragtop-review.md](ragtop-review.md), the options are in
+   [lock-screen.md](lock-screen.md). On a Z13 its root rule probably does not match the switch device,
+   so detection would need a workaround.
+4. Whether to evaluate `ekollof/omarchy-osk` (a keyboard and touch plugin, not yet examined).
+5. Whether to start the lock keyboard work without a green light on 2026-11-15.
