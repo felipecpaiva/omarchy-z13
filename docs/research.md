@@ -16,14 +16,24 @@ Written 2026-10-31. Star counts and PR states change daily, so treat them as a s
 | Model | ASUS ROG Flow Z13 (2025), `GZ302EA` |
 | Detachable keyboard | USB `0b05:1a30` (`GZ302EA-Keyboard`). A second ASUS device, `0b05:18c6` (`N-KEY Device`), is also present. |
 | Accelerometer | IIO device `accel_3d` at `/sys/bus/iio/devices/iio:device0` |
-| Tablet-mode switch | None. The only switch-type input device is `Lid Switch`. |
+| Tablet-mode switch | **Yes**, on the input device `Asus WMI hotkeys`. It fires on detach (`on`) and attach (`off`), seen once on 2026-11-01. See [minimal.md](minimal.md). |
 | Software | Omarchy 4.0.6-1, Hyprland 0.56.2-4, Quickshell 0.3.2, iio-sensor-proxy 3.9-1, kernel 7.2.8-9-omarchy |
 
-The missing tablet switch matters. Tools that wait for a "tablet mode" event from the kernel will never
-hear one on this model. One KDE project says the same thing in its README
-([aic0d3r/z13-tablet-kit](https://github.com/aic0d3r/z13-tablet-kit), `[source]`): the firmware advertises
-a switch but never sends it. Alan's Omarchy plugin works around this by watching the keyboard appear and
-disappear on USB.
+**Correction, 2026-11-01.** An earlier version of this page said the Z13 had no tablet switch. That was
+wrong. I had listed input devices by name and looked for "tablet" or "switch", and the device is called
+`Asus WMI hotkeys`. The right check is the kernel capability bitmask
+(`/sys/class/input/input*/capabilities/sw`, bit 1 set means tablet mode). On this machine that device
+reports `2`, and a Hyprland bind on it fired when the keyboard was detached and again when it was
+reattached (kernel 7.2.8, Hyprland 0.56.2, one test).
+
+One KDE project reports the opposite for the same model: the firmware advertises the switch but never
+sends it ([aic0d3r/z13-tablet-kit](https://github.com/aic0d3r/z13-tablet-kit), `[source]`). Kernel and
+firmware versions probably explain the difference. Alan's Omarchy plugin does not rely on the switch. It
+watches the keyboard appear and disappear on USB, which also works.
+
+The switch's device node (`/dev/input/event18` here) is `root:input`, mode 0660, and my user is not in
+the `input` group, so programs run as the user cannot read it directly. Hyprland receives it through the
+login session, which is why a bind works with no setup. `[tested here]`
 
 ## 2. What Omarchy ships
 
@@ -41,7 +51,7 @@ disappear on USB.
 | Tool | What it does | Fit for the Z13 | State on 2026-10-31 |
 |---|---|---|---|
 | [AlanRoman117/omarchy-tablet-mode-asus-rog-flow-z13](https://github.com/AlanRoman117/omarchy-tablet-mode-asus-rog-flow-z13) | Detects keyboard detach over USB. Shows a themed `wvkbd` keyboard, rotates with the accelerometer, widens gaps for fingers, bar card with lock. | Built and tested on a GZ302EA, Omarchy 4.0.6, Hyprland 0.56.2 | v0.1.2, created 2026-10-06, one tester, MIT (patches GPL-3.0-only) |
-| [sclemance/ragtop](https://github.com/sclemance/ragtop) | Keyboard drawn by the shell (themes, swipe typing), touch moves and resizes tiles, lock screen. Follows a kernel tablet switch. | Needs a tablet switch, which the Z13 lacks. Has a manual "Always On" mode. | Beta, v0.47.0, tested on a Yoga and a Surface |
+| [sclemance/ragtop](https://github.com/sclemance/ragtop) | Keyboard drawn by the shell (themes, swipe typing), touch moves and resizes tiles, lock screen. Follows a kernel tablet switch. | Follows a kernel tablet switch, and its README names `asus-wmi` among the supported drivers. The Z13 has one that works (see section 1). Has a manual "Always On" mode too. Evaluated in [evaluation.md](evaluation.md). | Beta, v0.47.0, tested on a Yoga and a Surface, not on a Z13 |
 | [yeutterg/omarchy-tablet](https://github.com/yeutterg/omarchy-tablet) | Touch layer: keyboard that pops up on text fields, lock-screen PIN pad, `hyprgrass` touch resize, tray fix. | Made for Surface-style detachables. Good source of ideas. | No license file |
 | [andreiyurik/omarchy-tablet-mode](https://github.com/andreiyurik/omarchy-tablet-mode) | Rotation, touch and pen mapping, keyboard off when folded. No keyboard of its own. | Made for hinged 2-in-1 laptops | v1.7.5, tested on a ThinkPad X1 Yoga |
 | [TeaRevver/2-in-1-rotation](https://github.com/TeaRevver/2-in-1-rotation) | Rotation tool announced in the Omarchy rotation discussion | Surface-specific | Not examined beyond the announcement |

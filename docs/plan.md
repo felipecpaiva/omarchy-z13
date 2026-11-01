@@ -12,6 +12,11 @@ Nothing in here has been done yet unless it says so. Owner: Felipe Paiva. Last u
 
 ## Track 1: this machine
 
+**Which path wins is not settled.** [evaluation.md](evaluation.md) compares the native route with the
+plugins and names the two questions that decide it (lock-screen typing, and whether patched Omarchy
+overlays and a root udev rule are acceptable). The text below assumes the native route until those are
+answered.
+
 **Main path: the minimal design in [minimal.md](minimal.md).** Use what Omarchy and Hyprland already
 have, add one package (an on-screen keyboard), no plugin, no rotation code. It needs the detach tests in
 that file first.
@@ -126,5 +131,6 @@ into the workspace's contributions list.
 1. Rotation option A, B or C (above).
 2. Stay on the stable channel, or try the 4.5 RC channel on this machine. The RC could break things, and
    I lean towards waiting for final.
-3. Whether to try `ragtop` after the Z13 plugin. It needs a tablet switch the Z13 lacks, so it would run
-   in its manual "Always On" mode.
+3. Whether to trial `ragtop`. The Z13's tablet switch works (see [minimal.md](minimal.md)), so ragtop's
+   automatic mode should apply. [evaluation.md](evaluation.md) compares it with the native route and
+   says what decides between them.

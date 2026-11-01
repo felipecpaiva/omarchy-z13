@@ -36,6 +36,7 @@ only seen in a search result.
 |---|---|
 | [docs/research.md](docs/research.md) | Findings, tool comparison, upstream status, sources, and what I could not find |
 | [docs/minimal.md](docs/minimal.md) | A design for tablet mode with one new package, no plugin and no rotation code, built on what Omarchy already has. Not built yet. |
+| [docs/evaluation.md](docs/evaluation.md) | The native route against ragtop, Alan's plugin and the yeutterg set: functions, toggles, resource cost, a measurement protocol, and the two questions that decide the path |
 | [docs/plan.md](docs/plan.md) | What I will do on this machine, step by step with rollback, plus what I want to send upstream |
 
 No scripts yet. I will add one only after it has run on a real Z13.

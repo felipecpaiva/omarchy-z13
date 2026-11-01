@@ -28,7 +28,7 @@ Three rules come out of the research:
 |---|---|---|
 | New packages | **1, unavoidable** | An on-screen keyboard. Nothing installed draws one. |
 | New plugins | **0** | A menu entry in `~/.config/omarchy/extensions/omarchy-menu.jsonc` does the show and hide job. |
-| New background daemons | **0** | Hyprland itself hears the detach (`[tested here]`, see "Detecting the detach"). |
+| New background daemons | **0, or 1 if auto-show is turned on** | Hyprland itself hears the detach (`[tested here]`). Auto-show needs one small D-Bus listener, and only runs while the user enables it. |
 | Rotation code | **0** | Wait for Omarchy 4.5, or use manual rotation. |
 
 For comparison, the Z13 plugin ([research.md section 3](research.md)) builds its own `wvkbd` with three
@@ -80,9 +80,19 @@ suspend case. B (udev) remains the backup if A turns out to miss events after su
 
 ## The keyboard, the one real install
 
-Nothing installed draws a keyboard. fcitx5's `libvirtualkeyboard.so` is a service API, and the keyboard
-screen it needs is a separate add-on that is not in the repos (`[snippet]`, AUR, built for a patched
-fcitx5). Do not chase it.
+Nothing installed draws a keyboard. fcitx5's virtual keyboard add-on is the message channel, not the
+screen. This was first dismissed here, and that was a mistake. Checked on 2026-11-01:
+
+- fcitx5 on this machine has the add-on loaded and exposes `/virtualkeyboard` with `ShowVirtualKeyboard`,
+  `HideVirtualKeyboard` and `ToggleVirtualKeyboard` (`[tested here]`, `busctl --user introspect`).
+- ragtop's `fcitx-osk-bridge.py` shows the other side: a program claims the D-Bus name
+  `org.fcitx.Fcitx5.VirtualKeyboard`, and fcitx5 then calls `ShowVirtualKeyboard` and
+  `HideVirtualKeyboard` on it when a text field gains or loses focus (`[source]`).
+- So any small keyboard program can get auto-show next to Omarchy's fcitx5, with no change to the input
+  method, if something answers on that name and shows or hides the keyboard. `python-gobject` is
+  installed. That "something" is the only code to write. `[untested]` until I see a show call arrive.
+- Limit, from ragtop's README: fcitx5's "hide" also fires on every keystroke from the on-screen keyboard,
+  so auto-hide cannot be trusted. Auto-show works, hide is by hand.
 
 Hyprland shows `hl-virtual-keyboard-fcitx5` as the main keyboard (`[tested here]`), so Omarchy's fcitx5
 service is the active input method. That decides the choice:
@@ -90,7 +100,7 @@ service is the active input method. That decides the choice:
 | | `squeekboard` | `wvkbd` |
 |---|---|---|
 | Where it comes from | Official `extra` repo, 5.9 MB installed (`[tested here]`, `pacman -Si`) | Not in the official repos (`[tested here]`). AUR build, and `yay` is installed. |
-| Auto-show on a tapped text field | Yes, through `text-input-v3` (`[snippet]`) | No. You show it by signal, button or menu. |
+| Auto-show on a tapped text field | Yes, through `text-input-v3` (`[snippet]`) | Not by itself. By signal, button or menu, or through the fcitx5 listener described above (`[untested]`). |
 | Conflict | It wants the input-method slot that Omarchy's fcitx5 holds. The tablet repo from yeutterg masks fcitx5 to make it work (`[source]`), which changes an Omarchy default. | None. It sends plain virtual key presses. |
 | Show and hide | A D-Bus call (`sm.puri.OSK0 SetVisible`) is what I expect, `[untested]` | `SIGUSR2` shows, `SIGUSR1` hides (`[snippet]`) |
 
