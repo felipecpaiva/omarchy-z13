@@ -30,6 +30,7 @@ lockouts as fixes where that is honest.
 | Date | Where | What | State |
 |---|---|---|---|
 | 2026-11-01 | [omacom/omarchy#17222](https://github.com/omacom/omarchy/discussions/17222) (Suggestions) | Lock screen keyboard for detachables, then a PIN. Consolidates #9600 and #14341. Offers shape (a) the lock plugin draws it or (b) the lock plugin exposes a hook. Offers to build it after 4.5. | 1 reply on 2026-11-01 from Alan Roman (author of #14341, a second Z13 owner): plus one, prefers (a), leaves the PIN to the maintainers. No maintainer reply yet. |
+| 2026-11-02 | Reply on [#17222](https://github.com/omacom/omarchy/discussions/17222#discussioncomment-19344148) under Alan Roman's comment | Thanks, the README correction applied, agreement on shape (a), and a Z13 data point: the tablet switch fires on detach and attach, and his USB detection works too. States we will wait for a maintainer before building. | Posted |
 | 2026-11-02 | [sambuaneesh/omarchy-hyprmouse#1](https://github.com/sambuaneesh/omarchy-hyprmouse/issues/1) (issue) | Asks if the author would take support for hardware buttons that arrive as keys, like the Z13 side button (`XF86Launch3`). Suggests a learn step with temporary Hyprland binds, so no root and no udev rule. Offers a PR, Z13 first. | No reply yet |
 | 2026-11-01 | Comments on [#9600](https://github.com/omacom/omarchy/discussions/9600) and [#14341](https://github.com/omacom/omarchy/discussions/14341) | One line pointers to #17222 | Posted |
 
@@ -39,6 +40,7 @@ The text as posted is in [upstream-proposal.md](upstream-proposal.md).
 
 | When | What |
 |---|---|
+| 2026-11-08 and 2026-11-15 | Look at #17222 and hyprmouse#1 for maintainer or author replies. We replied to Alan on 2026-11-02 and are waiting. |
 | 2026-11-15 | Owner decides whether to build the lock keyboard without a maintainer green light. If yes, the work branch lives in a separate checkout of Omarchy and not inside this repo. |
 | Waiting | A reply on [omarchy-hyprmouse#1](https://github.com/sambuaneesh/omarchy-hyprmouse/issues/1). If the author declines, build the small menu mapper ([side-button.md](side-button.md), option 1). If yes, open a PR to hyprmouse, Z13 first. |
 | Any time, needs the owner's yes | A comment on [#15977](https://github.com/omacom/omarchy/discussions/15977) linking #17222. The author asks for "a hook for extra login methods in the lock screen", the same hook as shape (b). |

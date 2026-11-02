@@ -27,7 +27,8 @@ Answered by the owner:
 
 Waiting:
 
-- A maintainer reply on #17222. One community reply is in (Alan Roman, 2026-11-01, plus one, prefers
+- A maintainer reply on #17222 (we replied to Alan on 2026-11-02 and are waiting; check on 2026-11-08 and
+  2026-11-15). One community reply is in (Alan Roman, 2026-11-01, plus one, prefers
   shape (a)). The owner decides on 2026-11-15 whether to build the lock keyboard without a maintainer
   answer.
 - The owner's answer on whether copies of Omarchy's overlays and a root udev rule are acceptable (the
