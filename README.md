@@ -56,7 +56,7 @@ section of [docs/plan.md](docs/plan.md).
 | [docs/upstream.md](docs/upstream.md) | How Omarchy takes changes, what I sent, what I watch, what comes next |
 | [docs/upstream-proposal.md](docs/upstream-proposal.md) | The proposal text exactly as posted |
 | [docs/audio.md](docs/audio.md) | Quiet speakers: the hidden `Master` volume at 69%, the fix, and the right-amp errors I saw |
-| [docs/side-button.md](docs/side-button.md) | The Z13's side button (`KEY_PROG3`): what the kernel does with it, a live test, and a design for a menu mapper that lets the user choose its action |
+| [docs/side-button.md](docs/side-button.md) | The Z13's side button (confirmed as `XF86Launch3`): what the kernel does with it, the live test, and a design for a menu mapper that lets the user choose its action |
 | [docs/plan.md](docs/plan.md) | Where I stopped, what to do next on this machine with rollback, and the upstream track |
 
 No scripts yet. I will add one only after it has run on a real Z13.

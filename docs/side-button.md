@@ -20,7 +20,8 @@ result, `[inferred]` reasoned from the above, `[untested]` not checked.
 - The `N-KEY Device` (USB `0b05:18c6`, the one that stays on the tablet when the keyboard comes off)
   advertises `KEY_PROG1` and `KEY_PROG2` and many media keys. `[tested here]`
 
-So the button should arrive as `KEY_PROG3`. In Hyprland that key is called `XF86Launch3`. `[inferred]` One
+So the button should arrive as `KEY_PROG3`, which Hyprland calls `XF86Launch3`. The live test below confirmed it
+(`[tested here]`). One
 community Z13 guide binds `XF86Launch3` to "a dedicated side button"
 ([ib99 guide](https://github.com/ib99/ASUS-ROG-Flow-Z13-2025-Linux-Guide-Omarchy-CachyOS-Kernel), `[snippet]`).
 
@@ -34,13 +35,20 @@ community Z13 guide binds `XF86Launch3` to "a dedicated side button"
 
 ## The live test
 
-Status: **running, result pending.** On 2026-11-02 I added temporary Hyprland binds on `XF86Launch1`,
+Status: **done 2026-11-02.** I added I added temporary Hyprland binds on `XF86Launch1`,
 `XF86Launch2`, `XF86Launch3`, `XF86Launch4`, `F13`, `F14` and `F15`. Each writes the key name and the time
 to a log and shows a "Z13 probe" notification. They listen only for those seven keys, so no typing is
 recorded. They disappear on the next `hyprctl reload`. All seven showed up in `hyprctl binds -j`
-(`[tested here]`). Expected result: press the button, `XF86Launch3` fires.
+(`[tested here]`). I then pressed the button twice (a short press and a press held for about a second). The log shows
+`XF86Launch3` at 09:21:15 and again at 09:21:55, one event per press, and none of the other six keys.
 
-Result: (to fill in)
+**Result: the side button is `XF86Launch3` in Hyprland on this Z13** (kernel 7.2.8, Hyprland 0.56.2,
+Omarchy 4.0.6). Nothing grabbed it first, so `asusd` does not swallow it. The probe was removed with a
+`hyprctl reload` and no probe binds remained. `[tested here]`
+
+What the test did not show: whether a held press sends one event or a repeat, and how long the hold was.
+The log has one line per press, so the held press produced one event. Telling short from long press needs
+either Hyprland's long press bind or the release event, and both are `[untested]`.
 
 ## Hyprland facts that matter here
 
@@ -82,14 +90,13 @@ What the list of actions could hold:
 | Any key combination | `wtype` sends the keys | `wtype` is installed `[tested here]`. Whether Hyprland binds react to keys sent by `wtype` is `[untested]`. A direct command is more reliable than faking keys. |
 
 A "learn the button" step would make it work on other ROG machines too: it adds probe binds like the ones
-above, the user presses the button, and the mapper records which key fired. The same step doubles as the
-test for this Z13.
+above, the user presses the button, and the mapper records which key fired. That is exactly the test that
+confirmed `XF86Launch3` on this Z13.
 
 Cost at rest: nothing runs between presses. One static bind lives inside Hyprland.
 
 ## Not done
 
-- The live test result.
 - Which actions the owner wants as presets.
 - Nothing is built. No script exists.
-- Whether `asusd` or anything else grabs the button before Hyprland sees it. The probe will show.
+- Short press against long press timing (see the test result above).
