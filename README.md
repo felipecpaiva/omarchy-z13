@@ -11,7 +11,7 @@ section of [docs/plan.md](docs/plan.md).
 
 ## The short version
 
-- **Omarchy 4.0.6 and 4.5.0-rc2 have no on-screen keyboard and no auto-rotate.** I compared the two
+- **Omarchy 4.0.6 and the 4.5 release candidates (rc2, and the rc3 tag) have no on-screen keyboard and no auto-rotate.** I compared the two
   tags and found no tablet commits (commit messages only, so a change with a vague title could hide).
 - **One plugin targets the Z13 directly:**
   [AlanRoman117/omarchy-tablet-mode-asus-rog-flow-z13](https://github.com/AlanRoman117/omarchy-tablet-mode-asus-rog-flow-z13).

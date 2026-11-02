@@ -38,7 +38,8 @@ login session, which is why a bind works with no setup. `[tested here]`
 ## 2. What Omarchy ships
 
 - **4.0.6 (stable) and 4.5.0-rc2 (release candidate, 2026-10-27):** no on-screen keyboard, no
-  auto-rotate. `[commits]` I compared `v4.0.6...v4.5.0-rc2` (1,272 commits) and searched the messages for
+  auto-rotate. The tag `v4.5.0-rc3` exists too (checked 2026-11-02, 28 commits after rc2, none about touch,
+  tablet, rotation or hotkeys by message). See [side-button.md](side-button.md) for what else I checked in it. `[commits]` I compared `v4.0.6...v4.5.0-rc2` (1,272 commits) and searched the messages for
   tablet, touch, rotate, on-screen, osk, accelerometer and orientation. Nothing relevant. The 4.5 release
   notes list no tablet feature either (`[source]`).
 - **Omarchy 4 has a plugin system** (Quickshell). Tablet tools ship as plugins and install with

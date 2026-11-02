@@ -160,6 +160,47 @@ would need the same read through as ragtop before use ([ragtop-review.md](ragtop
 - The rog-helper listener needs a root password prompt and a service to read the device. A Hyprland bind
   needs neither, and our probe proved it sees the press.
 
+## Omarchy 4.5 check (2026-11-02)
+
+Checked before building, to make sure the direction still fits. Method: the compare view and file trees of
+`omacom/omarchy` at the tag `v4.5.0-rc3` and at the default branch `quattro`. `[source]`, nothing run.
+
+### Where 4.5 stands
+
+- `v4.5.0-rc3` is a tag (commit `f402ad0`). On 2026-11-02 it had no release page yet, only the tag. rc2 is
+  the last published release. There are 28 commits between rc2 and rc3. None of their messages mention
+  touch, tablet, rotation, an on-screen keyboard or hotkeys (commit messages only).
+- Release candidates are cut from a separate `rc` branch, not from `quattro`. That is why a compare of rc3
+  against newer `quattro` commits says "diverged". So a change merged on `quattro` is **not automatically
+  in rc3**. Anything marked "quattro only" below may or may not reach 4.5 final.
+
+### What it means for the side button
+
+| Finding | Detail |
+|---|---|
+| The side button stays free | The default bindings at rc3 use no `XF86Launch` key. They bind calculator, audio, brightness, keyboard light, touchpad and media keys only. |
+| Nothing disables the hotkey device | PR #9129 "Ignore vendor hotkey keyboard devices" (merged 2026-10-31, `quattro`) only changes the keyboard layout bar widget, so it does not pick a vendor hotkey device as the user's keyboard. It does not turn the device off or touch the button. The "disabled WMI rule" mentioned in the rog-helper notes is not from Omarchy. |
+| Binding helpers | 4.0.6 has `o.bind(keys, description, command, options)`, `o.bind_toggle` and `o.launch`. The description is what the keybindings menu shows. 4.5 adds `o.rebind` (replace a default bind, in rc3) and `o.bind_hold` (separate press and release actions, used for push to talk, in rc3). 4.0.6 has neither. A fixed bind written with `o.bind` works on both. |
+| Dictation has a command | rc3 has `omarchy-dictation <start\|stop\|toggle>`, which picks the configured backend (voxtype is one). Default binds at rc3: `Super+Ctrl+X` toggle, `F9` and `Alt+Right Alt` push to talk. On `quattro` the keys change again to `Alt+Space` and `Right Alt` (#17188). The command is the stable part, so a button action should call `omarchy-dictation toggle` on 4.5, not voxtype directly. |
+| Manual rotation is coming | `omarchy-hyprland-monitor-rotate [--monitor NAME] [0\|90\|180\|270]` exists on `quattro` only, not in rc3, along with a right click rotate in the display panel's layout map (#17170). Auto rotation is still missing. PRs #13531 and #7493 are still open. |
+| Keyboard settings | `Setup > Keyboard` grouping and `omarchy keyboard toprow` (#17270, #17258) are on `quattro` only. They do not cover hardware buttons. |
+| No keybinding editor yet | The keybindings menu in rc3 lists and runs binds. It has no editing. Discussions #16581 (edit and create keybindings from the picker) and #12879 (expose binding source info for tooling) still have 0 comments. |
+| Key naming hook | The keybindings menu reads `/usr/share/omarchy-platform/key-names`, one `<keysym> <name>` per line, so a platform package can name keys the way its keyboard prints them (the example given is a MacBook). No file names the Z13 side button. A small upstream idea, not asked yet. |
+| Tablet features | None in rc3. No on-screen keyboard, no auto rotate, no lock screen keyboard. |
+
+### Verdict
+
+The direction holds. 4.5 does not map hardware buttons and does not use `XF86Launch3`, so neither a fixed bind
+nor a mapper clashes with it. Adjustments to make:
+
+1. Write binds with `o.bind` and a description, so they work on 4.0.6 and 4.5 and show up in Omarchy's
+   keybindings menu.
+2. Prefer Omarchy's own commands as actions: `omarchy-menu toggle`, `omarchy-dictation toggle` (4.5),
+   `omarchy-hyprland-monitor-rotate` (when it ships), `omarchy-capture-screenshot`, `omarchy-system-lock`.
+   On 4.0.6 use `voxtype record toggle` until `omarchy-dictation` exists.
+3. Do not build a keybinding editor. Upstream is discussing one, with no replies yet.
+4. A mapper for hardware buttons that arrive as keys is still unaddressed upstream and in the community.
+
 ## Not done
 
 - Which actions the owner wants as presets.
