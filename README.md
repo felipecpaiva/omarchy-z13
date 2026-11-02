@@ -16,9 +16,12 @@ section of [docs/plan.md](docs/plan.md).
 - **One plugin targets the Z13 directly:**
   [AlanRoman117/omarchy-tablet-mode-asus-rog-flow-z13](https://github.com/AlanRoman117/omarchy-tablet-mode-asus-rog-flow-z13).
   It was tested on one Z13 (GZ302EA) with Omarchy 4.0.6 and Hyprland 0.56.2, which matches my setup.
-- **That plugin turns rotation on at the moment you detach the keyboard.** Read from its source: the
-  rotation lock starts off every time the service starts, and the sensor reader runs whenever tablet
-  mode is on and the lock is off. There is no setting to separate the two.
+- **That plugin turns on sensor rotation at the moment you detach the keyboard.** Read from its source:
+  the rotation lock starts off every time the service starts, and the sensor reader runs whenever tablet
+  mode is on and the lock is off. `auto_rotate=false` in its config stops the screen from following the
+  sensor while the on-screen keyboard and touch tweaks still come on at detach (the plugin's author
+  confirmed this on 2026-11-01). It also turns sensor rotation off for good. I found no setting that
+  keeps sensor rotation available but starts it only on request.
 - **The detach is visible to Hyprland with no extra software.** The Z13's `Asus WMI hotkeys` device
   carries a tablet-mode switch, and a Hyprland bind on it fired on detach and again on attach (tested
   once, on kernel 7.2.8 and Hyprland 0.56.2). One KDE project reports the opposite for the same model, so

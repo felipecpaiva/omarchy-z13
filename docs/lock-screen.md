@@ -59,6 +59,13 @@ What option 3 costs:
 - We would own the maintenance. The licence is MIT, so copying is allowed if the copyright notice stays.
   The word list data in ragtop is CC BY-SA 4.0, which a lock-only copy would not include.
 
+Alan Roman, author of #14341 and of the Z13 tablet plugin, replied on #17222 on 2026-11-01. He prefers
+shape (a), with `omarchy.lock` drawing the keyboard itself, because password input then stays in
+Omarchy's lock code and keeps up with its updates instead of being passed to a plugin. His plugin
+deliberately stays out of authentication, and he looked at a cloned lock screen and rejected it for the
+same reasons. That is a second voice against the clone route (options 1 to 3), from someone with the
+same hardware.
+
 Chosen so far: option 5 first (the upstream post, see [upstream.md](upstream.md)). Option 3 is the
 fallback if upstream stays silent. The owner decides on 2026-11-15. Not started.
 

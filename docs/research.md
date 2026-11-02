@@ -85,7 +85,9 @@ Read from `bin/tablet-mode` at the repository head on 2026-10-31 (plugin version
 
 What this means: with the default settings, detaching the keyboard turns on rotation that follows the
 sensor. If you hold the device in portrait at that moment, the screen turns. `auto_rotate=false` stops
-that, and also stops all automatic rotation.
+that, and also stops all automatic rotation. The plugin's author confirmed on 2026-11-01 (in discussion
+#17222) that with `auto_rotate=false` tablet mode still comes on at detach, with the on-screen keyboard
+and touch tweaks, and the screen does not follow the sensor.
 
 ## 5. Open Omarchy bugs that touch users hit
 

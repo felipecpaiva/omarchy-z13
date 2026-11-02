@@ -29,7 +29,7 @@ lockouts as fixes where that is honest.
 
 | Date | Where | What | State |
 |---|---|---|---|
-| 2026-11-01 | [omacom/omarchy#17222](https://github.com/omacom/omarchy/discussions/17222) (Suggestions) | Lock screen keyboard for detachables, then a PIN. Consolidates #9600 and #14341. Offers shape (a) the lock plugin draws it or (b) the lock plugin exposes a hook. Offers to build it after 4.5. | No reply yet |
+| 2026-11-01 | [omacom/omarchy#17222](https://github.com/omacom/omarchy/discussions/17222) (Suggestions) | Lock screen keyboard for detachables, then a PIN. Consolidates #9600 and #14341. Offers shape (a) the lock plugin draws it or (b) the lock plugin exposes a hook. Offers to build it after 4.5. | 1 reply on 2026-11-01 from Alan Roman (author of #14341, a second Z13 owner): plus one, prefers (a), leaves the PIN to the maintainers. No maintainer reply yet. |
 | 2026-11-01 | Comments on [#9600](https://github.com/omacom/omarchy/discussions/9600) and [#14341](https://github.com/omacom/omarchy/discussions/14341) | One line pointers to #17222 | Posted |
 
 The text as posted is in [upstream-proposal.md](upstream-proposal.md).
@@ -49,7 +49,7 @@ The text as posted is in [upstream-proposal.md](upstream-proposal.md).
 
 | Where | What | State on 2026-11-01 |
 |---|---|---|
-| Discussions #9600, #14341 | Lock screen on-screen keyboard | No replies |
+| Discussions #9600, #14341 | Lock screen on-screen keyboard | No replies on either. Alan Roman, author of #14341, answered on #17222 instead. |
 | Discussion #15977 | omaFace and a hook for extra login methods | 1 comment |
 | Discussion #4982 | Facial login | 8 comments, competing PRs |
 | Discussion #14029 | TPM-backed passkeys | 0 comments |
