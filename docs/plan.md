@@ -131,9 +131,9 @@ Current leaning: A or B while on 4.0.6, then C when 4.5 ships. Undecided until S
   `auto_rotate=false` in the plugin and keep only the keyboard.
 - Re-check the `ShellIpc` plugins that did not load on 4.0.6 (a separate issue, not about touch).
 
-### Tweaks already applied on this machine (not touch related, `[tested here]`)
+### Tweaks already applied on this machine (`[tested here]`)
 
-These are generic Z13 settings that worked. Other guides cover the same ground, so this is a record.
+These are Z13 settings that worked. Other guides cover most of the same ground, so this is a record.
 
 1. **Power profile follows the charger.** `/etc/udev/rules.d/99-z13-power-profile.rules`:
 
@@ -151,7 +151,12 @@ These are generic Z13 settings that worked. Other guides cover the same ground, 
    with `/sys/module/ttm/parameters/pages_limit` and `/sys/class/drm/card*/device/mem_info_gtt_total`.
    Not tested with a large local model yet. If the GPU runs out of memory, raise the ceiling.
 
-3. **Launcher gotcha.** Omarchy's launcher hides desktop ids listed in
+3. **Side button opens the Omarchy menu** (2026-11-02). One line in `~/.config/hypr/bindings.lua`:
+   `o.bind("XF86Launch3", "Side button: Omarchy menu", "omarchy-menu toggle")`. Registered and listed in
+   the keybindings menu. The physical press is still to be confirmed. Details and undo steps in
+   [side-button.md](side-button.md).
+
+4. **Launcher gotcha.** Omarchy's launcher hides desktop ids listed in
    `/usr/share/omarchy/default/omarchy/launcher.hides`, and the id is the file name. A `btop.desktop` file
    never shows up. Give the file another name, keep `Name=btop`, then run `omarchy-restart-shell`.
 

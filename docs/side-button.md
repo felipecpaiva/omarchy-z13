@@ -201,8 +201,48 @@ nor a mapper clashes with it. Adjustments to make:
 3. Do not build a keybinding editor. Upstream is discussing one, with no replies yet.
 4. A mapper for hardware buttons that arrive as keys is still unaddressed upstream and in the community.
 
+## Applied: the side button opens the Omarchy menu (2026-11-02)
+
+The first change made on this Z13 for the button. It is one config line, no script and no package.
+
+Added to the end of `~/.config/hypr/bindings.lua`:
+
+```lua
+-- Z13 side button (XF86Launch3, the Asus WMI hotkeys device): open and close the Omarchy menu.
+o.bind("XF86Launch3", "Side button: Omarchy menu", "omarchy-menu toggle")
+```
+
+Why this form:
+
+- `o.bind(keys, description, command)` is the same helper Omarchy's own bindings use. The description makes
+  the bind appear in Omarchy's keybindings list. It exists in 4.0.6 and in 4.5, so the line works on both.
+- `omarchy-menu toggle` is what the default `Super+Space` bind runs, so pressing the button when the menu
+  is open closes it. The menu entries can be tapped, which makes the button useful in tablet mode.
+- The bind is not marked `locked`, so it does nothing while the lock screen is up.
+
+What was checked (`[tested here]`):
+
+- Before editing, a copy of the file was saved in `~/.local/state/z13-backups/`.
+- After `hyprctl reload` the bind is registered: key `XF86Launch3`, no modifiers, description "Side
+  button: Omarchy menu". `hyprctl configerrors` printed nothing. The touchscreen is still detected.
+- `omarchy menu keybindings --print` lists it as `XF86Launch3 → Side button: Omarchy menu`.
+- `omarchy-menu toggle` opens and closes the menu (the layer `omarchy-menu` appears and disappears).
+
+What was not shown:
+
+- **The physical press opening the menu.** Sending the key with `wtype` did not open it, but `wtype` also
+  failed to open it reliably on the default `Super+Space` bind in a control test, so that test says
+  nothing about the button. Hyprland binds and `wtype` virtual keys are therefore not a reliable pair.
+  Status: waiting for a real press. `[untested]` until then.
+
+To undo: delete those two lines from `bindings.lua`, or restore the saved copy, then run
+`hyprctl reload`.
+
+To change the action later: edit the command in that line. Candidates verified to exist are in the table
+above (screenshot, lock, dictation, touchscreen toggle, night light, power profile).
+
 ## Not done
 
-- Which actions the owner wants as presets.
-- Nothing is built. No script exists.
+- Which other actions the owner wants as presets. The first one chosen is the Omarchy menu.
+- Nothing is built beyond the one config line above. No script exists.
 - Short press against long press timing (see the test result above).
