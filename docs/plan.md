@@ -16,6 +16,7 @@ Done:
 - Lock screen analysis and options ([lock-screen.md](lock-screen.md)), face login research
   ([face-unlock.md](face-unlock.md)), and the boot password limit ([research.md](research.md) section 10).
 - A proposal posted to Omarchy, #17222 ([upstream.md](upstream.md), [upstream-proposal.md](upstream-proposal.md)).
+- The side button: research and a design for a menu mapper, live test running ([side-button.md](side-button.md)).
 
 Answered by the owner:
 
