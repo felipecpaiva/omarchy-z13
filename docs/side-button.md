@@ -229,12 +229,12 @@ What was checked (`[tested here]`):
 - `omarchy menu keybindings --print` lists it as `XF86Launch3 → Side button: Omarchy menu`.
 - `omarchy-menu toggle` opens and closes the menu (the layer `omarchy-menu` appears and disappears).
 
-What was not shown:
+Confirmed by a real press (2026-11-02): pressing the side button opens the Omarchy menu. `[tested here]`
+Closing it with a second press was not reported, so that part is `[untested]`.
 
-- **The physical press opening the menu.** Sending the key with `wtype` did not open it, but `wtype` also
-  failed to open it reliably on the default `Super+Space` bind in a control test, so that test says
-  nothing about the button. Hyprland binds and `wtype` virtual keys are therefore not a reliable pair.
-  Status: waiting for a real press. `[untested]` until then.
+What was not usable as a test: sending the key with `wtype`. It did not open the menu, and `wtype` also
+failed to open it reliably on the default `Super+Space` bind in a control test, so Hyprland binds and
+`wtype` virtual keys are not a reliable pair.
 
 To undo: delete those two lines from `bindings.lua`, or restore the saved copy, then run
 `hyprctl reload`.

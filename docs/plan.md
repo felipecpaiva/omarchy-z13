@@ -152,8 +152,8 @@ These are Z13 settings that worked. Other guides cover most of the same ground, 
    Not tested with a large local model yet. If the GPU runs out of memory, raise the ceiling.
 
 3. **Side button opens the Omarchy menu** (2026-11-02). One line in `~/.config/hypr/bindings.lua`:
-   `o.bind("XF86Launch3", "Side button: Omarchy menu", "omarchy-menu toggle")`. Registered and listed in
-   the keybindings menu. The physical press is still to be confirmed. Details and undo steps in
+   `o.bind("XF86Launch3", "Side button: Omarchy menu", "omarchy-menu toggle")`. Registered, listed in
+   the keybindings menu, and a physical press opens the menu (confirmed 2026-11-02). Details and undo steps in
    [side-button.md](side-button.md).
 
 4. **Launcher gotcha.** Omarchy's launcher hides desktop ids listed in
