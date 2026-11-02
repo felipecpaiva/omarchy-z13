@@ -156,7 +156,8 @@ would need the same read through as ragtop before use ([ragtop-review.md](ragtop
 - The gap is narrow: hardware buttons that arrive as keys, like the Z13 side button.
 - Options now: (1) use one fixed bind today, with no build; (2) ask the omarchy-hyprmouse author whether
   they would take support for non mouse hardware buttons, and contribute it there; (3) build our small
-  menu mapper only if (2) is declined or does not fit.
+  menu mapper only if (2) is declined or does not fit. Step (1) is applied (see below). Step (2) was
+  posted on 2026-11-02 as [omarchy-hyprmouse#1](https://github.com/sambuaneesh/omarchy-hyprmouse/issues/1), no reply yet.
 - The rog-helper listener needs a root password prompt and a service to read the device. A Hyprland bind
   needs neither, and our probe proved it sees the press.
 
