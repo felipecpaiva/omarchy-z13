@@ -44,7 +44,14 @@ At 100% `Master` and 100% system volume, YouTube was fine but a bit low. I raise
 wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 1.1
 ```
 
-This is not saved. It resets on reboot. I did not go higher, because speakers tend to distort above about
+To keep it across reboots, add a second line to `~/.config/hypr/autostart.lua`. The delay lets WirePlumber
+restore its own saved volume first. I have not tested it from a fresh login yet:
+
+```lua
+o.launch_on_start("sh -c 'sleep 5; wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 1.1'")
+```
+
+I did not go higher, because speakers tend to distort above about
 130%.
 
 ## Side finding: amp errors
@@ -60,7 +67,7 @@ journalctl -k -b | grep -E "cs35l41.*(failed|Cannot)"
 
 ## Not tried
 
-- PipeWire volume above 110%, and saving the 110% across reboots.
+- PipeWire volume above 110%, .
 - Other firmware tuning files for the speaker protection. One
   [write-up](https://dev.to/ankk98/rog-flow-z13-2025-linux-audio-quality-investigation-3ggk) says Linux is
   quieter than Windows on this model. That is one report, not a confirmed cause.
