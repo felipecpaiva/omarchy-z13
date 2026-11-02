@@ -75,4 +75,4 @@ draw a **keyboard** that types into the password field. They are related, both b
 the lock plugin, but they are different hooks: they could share one extension point or be two small ones,
 and that is for the maintainers to say. A PIN, the second half of our proposal, would be a flow of his kind,
 so it would not need its own mechanism if his hook goes ahead. (Corrected 2026-11-02: an earlier version
-of this page called them the same hook.) A comment to #15977 is drafted and not posted. Not started.
+of this page called them the same hook.) A comment linking the two was posted on #15977 on 2026-11-02. Face login itself: not started.

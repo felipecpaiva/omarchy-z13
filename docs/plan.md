@@ -170,7 +170,7 @@ status are in [upstream.md](upstream.md).
 |---|---|---|---|
 | 0 | `omacom/omarchy` discussion #17222 | **Posted 2026-11-01.** Lock screen keyboard for detachables, then a PIN. Pointer comments left on #9600 and #14341. Decision date 2026-11-15. | Done, waiting for a reply |
 | 0a | `sambuaneesh/omarchy-hyprmouse` issue #1 | **Posted 2026-11-02.** Asks if they would take support for hardware buttons that arrive as keys (the Z13 side button). Offers a PR, Z13 first. Fallback: our own small menu mapper. | Done, waiting for a reply |
-| 0b | `omacom/omarchy` discussion #15977 | A comment linking #17222. Its author asks for a hook for extra login flows. Ours (shape (b)) is for a keyboard surface. Related, not the same, and a PIN would be a flow of his kind. | The owner's yes |
+| 0b | `omacom/omarchy` discussion #15977 | **Posted 2026-11-02.** A comment linking #17222: his hook is for login flows, ours (shape (b)) is for a keyboard surface, a PIN would be a flow of his kind. Asks if he will open the hook PR first. | Done, waiting for a reply |
 | 1 | Alan's plugin repo | Issue: ask for a setting that starts the plugin locked, or separates rotation from detaching the keyboard. Mention the `LOCK=false` start and the `sensor_sync` condition. | Step 2 results |
 | 2 | Alan's plugin repo | Z13 hardware report: what worked on a second Z13, including the suspend test. | Step 2 results |
 | 3 | `omacom/omarchy` #9029 and #9757 | Comment with a test on a Z13 and `wvkbd` (does the menu close on the first tap, does the fix help). | A test with the plugin installed |
