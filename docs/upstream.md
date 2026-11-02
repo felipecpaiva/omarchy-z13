@@ -43,7 +43,7 @@ The text as posted is in [upstream-proposal.md](upstream-proposal.md).
 | 2026-11-08 and 2026-11-15 | Look at #17222 and hyprmouse#1 for maintainer or author replies. We replied to Alan on 2026-11-02 and are waiting. |
 | 2026-11-15 | Owner decides whether to build the lock keyboard without a maintainer green light. If yes, the work branch lives in a separate checkout of Omarchy and not inside this repo. |
 | Waiting | A reply on [omarchy-hyprmouse#1](https://github.com/sambuaneesh/omarchy-hyprmouse/issues/1). If the author declines, build the small menu mapper ([side-button.md](side-button.md), option 1). If yes, open a PR to hyprmouse, Z13 first. |
-| Any time, needs the owner's yes | A comment on [#15977](https://github.com/omacom/omarchy/discussions/15977) linking #17222. The author asks for "a hook for extra login methods in the lock screen", the same hook as shape (b). |
+| Any time, needs the owner's yes | A comment on [#15977](https://github.com/omacom/omarchy/discussions/15977) linking #17222. The author asks for "a hook for extra login methods in the lock screen" (extra login flows). Related to our shape (b), a keyboard surface, but a different hook. A PIN would be a flow of his kind. |
 | After a trial | A Z13 hardware report on Alan's plugin repo, with the suspend test. |
 | After a trial | A Z13 test report on PR [#13531](https://github.com/omacom/omarchy/pull/13531) or [#7493](https://github.com/omacom/omarchy/pull/7493) (rotation). The Z13 has a USB detach keyboard and a switch that works, a useful case. |
 | After a trial | A comment on #9029 and PR [#9757](https://github.com/omacom/omarchy/pull/9757) with a Z13 and `wvkbd` test. |
