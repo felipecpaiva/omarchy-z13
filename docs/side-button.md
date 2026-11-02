@@ -95,6 +95,71 @@ confirmed `XF86Launch3` on this Z13.
 
 Cost at rest: nothing runs between presses. One static bind lives inside Hyprland.
 
+## Prior art (searched 2026-11-02, before building anything)
+
+Short answer: the idea exists already for mouse buttons, and the Z13 side button is bound to fixed actions
+in several setups. No tool lets a user pick the action for a keyboard class hardware button like this one.
+
+### The Z13 side button in other people's setups (`[source]`, files read)
+
+| Where | What the button does | How |
+|---|---|---|
+| [Cliffback/omarchy-rog-z13-setup](https://github.com/Cliffback/omarchy-rog-z13-setup), `docs/rog-keys.md` | Toggle gaming mode, entered from Hyprland and exited from gamescope | Fixed bind on `XF86Launch3` |
+| [mkhan117/omarchy-z13-setup](https://github.com/mkhan117/omarchy-z13-setup), `docs/rog-keys.md` | Gaming mode toggle, and outside gaming mode a monitor mode toggle | Fixed bind on `XF86Launch3` |
+| [Naomarik/Z13-StrixHalo-Omarchy](https://github.com/Naomarik/Z13-StrixHalo-Omarchy) | Toggle monitor mode (double or external) | Fixed bind on `XF86Launch3` |
+| [ib99 guide](https://github.com/ib99/ASUS-ROG-Flow-Z13-2025-Linux-Guide-Omarchy-CachyOS-Kernel) | Opens a ROG power menu script | Fixed bind on `XF86Launch3` |
+| [austinwilkerson/omarchy-rog-helper](https://github.com/austinwilkerson/omarchy-rog-helper) (MIT, 1 star, created 2026-10-15) | Opens and closes its own ASUS panel (profiles, battery, lighting) | An optional user service that reads the hotkey device, plus a udev rule, installed with a root password prompt. It leaves Hyprland config unchanged. |
+
+All of them agree with our live test: the side button is `KEY_PROG3`, scan code `0xffff01`, on the
+`Asus WMI hotkeys` device. The rog-helper notes (`RESEARCH.md`) add something our test could not show: in
+a 25 second capture with four presses, a **recurring phantom event** appeared on the same device (scan
+`0xe9`, `KEY_UNKNOWN`). It is a different key from `KEY_PROG3`, so a Hyprland bind on `XF86Launch3` is not
+triggered by it. Our probe saw exactly one event per press. `[source]` for their capture, `[tested here]`
+for ours.
+
+Nothing in Omarchy's defaults or in this machine's Hyprland config disables the `Asus WMI hotkeys` device
+(`[tested here]`). The device is live in the compositor as `asus-wmi-hotkeys`.
+
+### The mapper idea, already built for mouse buttons
+
+[sambuaneesh/omarchy-hyprmouse](https://github.com/sambuaneesh/omarchy-hyprmouse) (MIT, 0 stars, created
+2026-10-25, one author, installed from the AUR as `omarchy-hyprmouse`, `[source]`, not run):
+
+- Lives in the Omarchy menu under Setup, Mouse. A terminal app (Python, Textual).
+- A button can run **any Omarchy hotkey, a command, a key combination, or nothing**.
+- A "learn" step: press `P`, then the button you want to change.
+- It makes any hotkey available as an action by wrapping `hl.bind` when the config loads, remembering the
+  action behind every bind, so a button can run exactly the same action. That includes hotkeys that run Lua
+  functions. This is the cleverest answer found to the "any shortcut" part.
+- Scope: mouse buttons. Its contribution guide says the most useful contribution is support for more
+  mice. Nothing there handles a key event from a device like `Asus WMI hotkeys`.
+
+That is the same architecture as the idea (menu entry, learn the button, choose an action), for a different
+kind of button. It has not been reviewed here, and it edits Hyprland wiring and installs hooks, so it
+would need the same read through as ragtop before use ([ragtop-review.md](ragtop-review.md)).
+
+### Other related tools
+
+| Tool | What | Fit |
+|---|---|---|
+| [neilerua973/omarchy-keybindings-editor](https://github.com/neilerua973/omarchy-keybindings-editor) (MIT, 0 stars, a diverged fork) | A panel that shows keybindings as an on-screen keyboard and lets you rebind the action or the key combo | Rebinding is limited to Super plus a letter, digit or F key, so it cannot take `XF86Launch3` |
+| Omarchy Setup, Keybindings (`omarchy-launch-config-editor ~/.config/hypr/bindings.lua`) | Opens `bindings.lua` in an editor | The built in way today, and works for a fixed bind |
+| Discussion [#16581](https://github.com/omacom/omarchy/discussions/16581) | Asks to edit and create keybindings from the Super+K picker | 0 comments |
+| Discussion [#12879](https://github.com/omacom/omarchy/discussions/12879) | Asks Omarchy to expose keybinding source information for tooling | 0 comments |
+| Discussion [#10859](https://github.com/omacom/omarchy/discussions/10859) | Asks for on screen feedback for the ASUS power profile hotkey | 0 comments, shows interest in ASUS keys |
+| Other Z13 and ROG plugins ([T3lluz/omarchy-rog-deck](https://github.com/T3lluz/omarchy-rog-deck), others) | Bar panels for power, lighting and fans | They bind ROG keys to their own panels, not to a user chosen action |
+
+### What this changes
+
+- A new app from scratch would mostly repeat omarchy-hyprmouse, which already has the menu entry, the
+  learn step and the "any hotkey, command or key combination" action list.
+- The gap is narrow: hardware buttons that arrive as keys, like the Z13 side button.
+- Options now: (1) use one fixed bind today, with no build; (2) ask the omarchy-hyprmouse author whether
+  they would take support for non mouse hardware buttons, and contribute it there; (3) build our small
+  menu mapper only if (2) is declined or does not fit.
+- The rog-helper listener needs a root password prompt and a service to read the device. A Hyprland bind
+  needs neither, and our probe proved it sees the press.
+
 ## Not done
 
 - Which actions the owner wants as presets.

@@ -16,7 +16,7 @@ Done:
 - Lock screen analysis and options ([lock-screen.md](lock-screen.md)), face login research
   ([face-unlock.md](face-unlock.md)), and the boot password limit ([research.md](research.md) section 10).
 - A proposal posted to Omarchy, #17222 ([upstream.md](upstream.md), [upstream-proposal.md](upstream-proposal.md)).
-- The side button: confirmed as `XF86Launch3` by a live test, plus a design for a menu mapper, not built ([side-button.md](side-button.md)).
+- The side button: confirmed as `XF86Launch3` by a live test, a design for a menu mapper, and a prior art search on 2026-11-02 showing the idea already exists for mouse buttons (omarchy-hyprmouse). Nothing built ([side-button.md](side-button.md)).
 
 Answered by the owner:
 
