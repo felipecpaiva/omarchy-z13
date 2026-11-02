@@ -153,7 +153,7 @@ These are Z13 settings that worked. Other guides cover most of the same ground, 
 
 3. **Side button opens the Omarchy menu** (2026-11-02). One line in `~/.config/hypr/bindings.lua`:
    `o.bind("XF86Launch3", "Side button: Omarchy menu", "omarchy-menu toggle")`. Registered, listed in
-   the keybindings menu, and a physical press opens the menu (confirmed 2026-11-02). Details and undo steps in
+   the keybindings menu, and a physical press opens the menu and a second press closes it (confirmed 2026-11-02). Details and undo steps in
    [side-button.md](side-button.md).
 
 4. **Launcher gotcha.** Omarchy's launcher hides desktop ids listed in

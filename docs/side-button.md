@@ -230,7 +230,7 @@ What was checked (`[tested here]`):
 - `omarchy-menu toggle` opens and closes the menu (the layer `omarchy-menu` appears and disappears).
 
 Confirmed by a real press (2026-11-02): pressing the side button opens the Omarchy menu. `[tested here]`
-Closing it with a second press was not reported, so that part is `[untested]`.
+A second press closes it (also confirmed by the owner on 2026-11-02). `[tested here]`
 
 What was not usable as a test: sending the key with `wtype`. It did not open the menu, and `wtype` also
 failed to open it reliably on the default `Super+Space` bind in a control test, so Hyprland binds and
