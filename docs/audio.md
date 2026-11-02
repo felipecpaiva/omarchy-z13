@@ -67,7 +67,7 @@ journalctl -k -b | grep -E "cs35l41.*(failed|Cannot)"
 
 ## Not tried
 
-- PipeWire volume above 110%, .
+- PipeWire volume above 110%.
 - Other firmware tuning files for the speaker protection. One
   [write-up](https://dev.to/ankk98/rog-flow-z13-2025-linux-audio-quality-investigation-3ggk) says Linux is
   quieter than Windows on this model. That is one report, not a confirmed cause.
