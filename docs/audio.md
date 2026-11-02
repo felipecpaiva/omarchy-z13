@@ -35,6 +35,18 @@ o.launch_on_start("amixer -c Generic_1 sset Master 100%")
 
 Limit: the card is picked by its id. If the card order ever swaps, the line will hit the wrong card.
 
+## Extra gain
+
+At 100% `Master` and 100% system volume, YouTube was fine but a bit low. I raised the PipeWire volume to
+110% (about 2.5 dB more) and that sounded fine, with no crackle:
+
+```
+wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 1.1
+```
+
+This is not saved. It resets on reboot. I did not go higher, because speakers tend to distort above about
+130%.
+
 ## Side finding: amp errors
 
 Before a reboot, the kernel log filled with `cs35l41-hda ...hda.1: Enable(1) failed: -16` (error `-16` is
@@ -48,7 +60,7 @@ journalctl -k -b | grep -E "cs35l41.*(failed|Cannot)"
 
 ## Not tried
 
-- PipeWire volume above 100%. It can distort loud sounds.
+- PipeWire volume above 110%, and saving the 110% across reboots.
 - Other firmware tuning files for the speaker protection. One
   [write-up](https://dev.to/ankk98/rog-flow-z13-2025-linux-audio-quality-investigation-3ggk) says Linux is
   quieter than Windows on this model. That is one report, not a confirmed cause.
