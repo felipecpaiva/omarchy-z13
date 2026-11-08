@@ -42,6 +42,12 @@ some power, and I have not put a number on it.
 
 Delete `/etc/limine-entry-tool.d/amdgpu-psr.conf`, run `sudo limine-update`, and reboot.
 
+## Upstream
+
+Posted to Omarchy on 2026-11-08 as a Support discussion:
+[omacom/omarchy#18120](https://github.com/omacom/omarchy/discussions/18120). It asks whether Omarchy
+should ship the option for the Z13 or whether this is a kernel bug. No reply yet.
+
 ## Not proven
 
 - I did not test PSR (`0x10`) and Panel Replay (`0x400`) one at a time, so I do not know which one is
