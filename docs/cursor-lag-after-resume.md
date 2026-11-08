@@ -1,0 +1,49 @@
+# Choppy cursor after sleep
+
+Status as of 2026-11-08. Tested on my own Z13 (GZ302EA), Omarchy 4.5.0-3, kernel 7.2.15-1-omarchy,
+Hyprland 0.56.2.
+
+## Symptom
+
+After the lid closes and opens again, the cursor works for about 2 seconds, then gets choppy. It
+comes and goes: a few smooth seconds, then choppy again. A reboot clears it, until the next sleep.
+
+## What I checked
+
+- **The hardware cursor is on.** `hyprctl getoption cursor:no_hardware_cursors` returned `set: false`,
+  so the software cursor was not the cause.
+- **The kernel log had a repeating `amdgpu` error.** `journalctl -b -k` showed
+  `[drm] [handle_hpd_irq_replay_sink] DPCD read addr.0x378 failed with 10 retries`. It appeared at boot
+  and again at the wake from `s2idle`. That error belongs to the panel's self refresh path (PSR and
+  Panel Replay). I found no `i2c_hid` reset errors, so the touchpad driver looked fine.
+- **I found no community report for this exact setup.** Searches for the Z13, Hyprland and cursor lag
+  after resume turned up only loosely related threads. A search of the Omarchy issues found nothing.
+
+## Fix
+
+Turn off PSR and Panel Replay in the `amdgpu` driver with a kernel option. This follows the pattern of
+the other drop-ins in `/etc/limine-entry-tool.d/`:
+
+```bash
+echo 'KERNEL_CMDLINE[default]+=" amdgpu.dcdebugmask=0x410"' | sudo tee /etc/limine-entry-tool.d/amdgpu-psr.conf
+sudo limine-update
+```
+
+Reboot, then check `cat /proc/cmdline | grep -o "amdgpu[^ ]*"`. It should print
+`amdgpu.dcdebugmask=0x410`.
+
+## Result
+
+Tested once: after the reboot I closed the lid, opened it, and moved the mouse. It stayed smooth. One
+test, not a long soak. I did not measure the battery cost. Turning off panel self refresh should cost
+some power, and I have not put a number on it.
+
+## Rollback
+
+Delete `/etc/limine-entry-tool.d/amdgpu-psr.conf`, run `sudo limine-update`, and reboot.
+
+## Not proven
+
+- I did not test PSR (`0x10`) and Panel Replay (`0x400`) one at a time, so I do not know which one is
+  the cause. `0x410` turns off both.
+- I did not capture the bad state with a frame counter, so "choppy" is by eye.
