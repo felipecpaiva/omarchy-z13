@@ -38,6 +38,14 @@ Tested once: after the reboot I closed the lid, opened it, and moved the mouse. 
 test, not a long soak. I did not measure the battery cost. Turning off panel self refresh should cost
 some power, and I have not put a number on it.
 
+## Narrower option: 0x600 also works
+
+On 2026-11-08 I swapped `0x410` for `0x600` (turns off PSR-SU, `0x200`, and Panel Replay, `0x400`; plain
+PSR, `0x10`, stays on). After a reboot, the cursor stayed smooth after sleep. One reboot, a few sleep
+cycles by eye, no battery measurement. So plain PSR is probably not the cause. Panel Replay or PSR-SU
+is. I did not test `0x400` or `0x200` alone. The `0x600` value comes from the
+[GZ302 setup project](https://github.com/th3cavalry/GZ302-Linux-Setup). I now run `0x600`.
+
 ## Rollback
 
 Delete `/etc/limine-entry-tool.d/amdgpu-psr.conf`, run `sudo limine-update`, and reboot.
@@ -50,6 +58,6 @@ should ship the option for the Z13 or whether this is a kernel bug. No reply yet
 
 ## Not proven
 
-- I did not test PSR (`0x10`) and Panel Replay (`0x400`) one at a time, so I do not know which one is
-  the cause. `0x410` turns off both.
+- I did not test Panel Replay (`0x400`) and PSR-SU (`0x200`) one at a time, so I do not know which one
+  is the cause. `0x600` turns off both.
 - I did not capture the bad state with a frame counter, so "choppy" is by eye.
