@@ -43,8 +43,15 @@ some power, and I have not put a number on it.
 On 2026-11-08 I swapped `0x410` for `0x600` (turns off PSR-SU, `0x200`, and Panel Replay, `0x400`; plain
 PSR, `0x10`, stays on). After a reboot, the cursor stayed smooth after sleep. One reboot, one sleep
 test by eye, no battery measurement. So plain PSR is probably not the cause. Panel Replay or PSR-SU
-is. I did not test `0x400` or `0x200` alone. The `0x600` value comes from the
-[GZ302 setup project](https://github.com/th3cavalry/GZ302-Linux-Setup). I now run `0x600`.
+is. The `0x600` value comes from the
+[GZ302 setup project](https://github.com/th3cavalry/GZ302-Linux-Setup).
+
+## Narrowest option: 0x400 (Panel Replay only) works
+
+Later the same day I set `0x400` alone: only Panel Replay off, PSR and PSR-SU left on. After a reboot,
+the cursor stayed smooth after sleep. One reboot, one sleep test by eye, no battery measurement. So
+**Panel Replay is the cause**, and `0x400` is the smallest change that fixed it here. I now run
+`0x400`. I did not test PSR-SU (`0x200`) alone, because `0x400` already fixes it.
 
 ## Rollback
 
@@ -58,6 +65,6 @@ should ship the option for the Z13 or whether this is a kernel bug. No reply yet
 
 ## Not proven
 
-- I did not test Panel Replay (`0x400`) and PSR-SU (`0x200`) one at a time, so I do not know which one
-  is the cause. `0x600` turns off both.
+- Each result rests on one sleep test. I did not repeat them over days, so a rare relapse could hide.
+- I did not measure the battery cost of any of the three values.
 - I did not capture the bad state with a frame counter, so "choppy" is by eye.
