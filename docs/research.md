@@ -46,6 +46,12 @@ login session, which is why a bind works with no setup. `[tested here]`
   `omarchy plugin add <git url> --enable`. A plugin copies files into `~/.config/omarchy/plugins`, so
   removal is cheap. `[source]`
 - **4.5 adds floating workspaces with a dock.** It may help on touch. I have not tried it.
+  A dock extension is being discussed upstream (2026-11-09, [#18249](https://github.com/omacom/omarchy/discussions/18249)):
+  a window list per app, hover previews, and close and minimize on cards, built as a separate plugin on
+  the dock's open-state hook proposed in [#16609](https://github.com/omacom/omarchy/pull/16609). Hover
+  previews need a pointer. On a tablet they would need a tap or a long press instead. The plan is in the
+  [omahop repo](https://github.com/felipecpaiva/omahop) (`docs/research/dock-spike.md`). `[source]` (PR and
+  discussion text, read 2026-11-09). Not tried on a Z13.
 
 ## 3. Community tools
 

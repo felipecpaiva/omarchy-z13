@@ -137,6 +137,7 @@ Expected size: small, but I have not written it, so I will not give a line count
   Tapping a menu entry is fine.
 - **Electron apps** will not show the keyboard on their own.
 - **Hover-only interface** such as the tray drawer misbehaves on touch.
+  Planned dock hover previews for floating workspaces have the same limit: a touch screen has no hover, so they need a tap or long press (see [research.md](research.md)).
 - **Custom touchscreen gestures** need the `hyprgrass` plugin, which is not in the repos, and `hyprpm` is
   not installed. `hl.gesture` exists in the Lua API, but whether it receives touchscreen input is
   `[untested]`. Earlier versions of Hyprland used it for touchpads only.
