@@ -1,6 +1,9 @@
 # Upstream report: power profile on the Z13
 
-**Status: DRAFT. Not posted.** Nothing here goes to Omarchy until I have read it and agreed to the text.
+**Status: POSTED on 2026-11-10.** Comment on issue 7516: https://github.com/omacom/omarchy/issues/7516#issuecomment-6759541297 .
+Discussion in Suggestions: https://github.com/omacom/omarchy/discussions/18332 . Two lines in the discussion were softened at
+posting time to say only what I tested: the `asusctl` setting "should" stop the plug flash (not re-tested), and the speed under
+`launch` was "in line with" `performance` in a short run. The text below is the draft; the posted discussion has those two edits.
 Measurements and method are in [power-profile.md](power-profile.md).
 
 ## Where it goes, and why
@@ -62,8 +65,8 @@ Before posting, re-read 7516, 16454 and the Omarchy version on `main`, so nothin
 
 ## Checks before posting
 
-- [ ] The repo link works (the repo and `docs/power-profile.md` are pushed).
-- [ ] Re-read issue 7516, pull request 16454 and Discussions for anything new or a duplicate.
+- [x] The repo link works (the repo and `docs/power-profile.md` are pushed).
+- [x] Re-read issue 7516, pull request 16454 and Discussions for anything new or a duplicate. Nothing new since 2026-11-01. Related but different: discussion 7830 (profile at boot) and 10859 (OSD for the ASUS power profile hotkey).
 - [ ] Re-test the plug flash after `asusctl profile set --ac balanced`, or keep the "not tested" line.
-- [ ] No machine name, address or private path in the text.
-- [ ] I have read the final wording and approved it.
+- [x] No machine name, address or private path in the text.
+- [x] I read the wording and approved it.

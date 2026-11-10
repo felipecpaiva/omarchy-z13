@@ -214,6 +214,7 @@ the model at `~/models/Qwen3-30B-A3B-Q4_K_M.gguf`.
 - Done: the measurements above, the plug tests, the three changes, the fan curve experiment.
 - Next: log one more plug test after the `asusctl` change. Compare idle watts on battery with the profile
   on `balanced` and `power-saver`.
-- Next: a report to Omarchy, see [upstream-power-profile.md](upstream-power-profile.md).
+- Done: report sent to Omarchy on 2026-11-10, a comment on issue 7516 and a Suggestions discussion (18332), see
+  [upstream-power-profile.md](upstream-power-profile.md). Watch both for replies.
 - Only if the above leaves a real gap: a small script that switches `balanced` and `performance` by load
   and heat, with a delay so it does not flip back and forth. Not started.
