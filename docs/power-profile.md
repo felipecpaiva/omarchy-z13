@@ -121,8 +121,9 @@ The gap is 7% here, smaller than in test 3, because a short run does not heat th
 
 1. **Deleted my own udev rule.** It was redundant, as Omarchy applies its saved value anyway.
 2. **`asusctl profile set --ac balanced`.** So `asusd` stops trying to put the machine on `performance`
-   when I plug in. **Not re-tested.** I confirmed with `asusctl profile get` that the plugged-in profile
-   now reads `Balanced`, but I did not log another plug event after the change.
+   when I plug in. **Re-tested on 2026-11-10 (test 3):** on a replug the platform profile went `quiet`,
+   then `balanced`, and `performance` never appeared in the log. The flash is gone. I tested the plug in
+   only, not the unplug.
 3. **Habit, not a setting:** stay on `balanced`, use `launch` for heavy jobs.
 
 ## What I tried and rolled back: a custom fan curve
@@ -166,7 +167,7 @@ Found by search, not by running it (except where noted):
 
 ## What I did not prove
 
-- Whether the plug time flash is gone after the `asusctl profile set --ac balanced` change.
+- The unplug side after the `asusctl profile set --ac balanced` change (test 3 covered the plug in only, one run).
 - Why the profile was `performance` once at 16:10 with no plug event. It was not my udev rule and the
   saved files were untouched. Something set it by hand or through a menu.
 - Whole machine power. I only see the chip's watts on AC. A battery drain comparison would add fans and

@@ -67,6 +67,6 @@ Before posting, re-read 7516, 16454 and the Omarchy version on `main`, so nothin
 
 - [x] The repo link works (the repo and `docs/power-profile.md` are pushed).
 - [x] Re-read issue 7516, pull request 16454 and Discussions for anything new or a duplicate. Nothing new since 2026-11-01. Related but different: discussion 7830 (profile at boot) and 10859 (OSD for the ASUS power profile hotkey).
-- [ ] Re-test the plug flash after `asusctl profile set --ac balanced`, or keep the "not tested" line.
+- [x] Re-tested the plug flash after `asusctl profile set --ac balanced` on 2026-11-10: no `performance` flash on replug (one run, plug in only). The posted text still says "should".
 - [x] No machine name, address or private path in the text.
 - [x] I read the wording and approved it.
