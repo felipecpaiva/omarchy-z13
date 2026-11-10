@@ -1,0 +1,17 @@
+
+Fan curves for Balanced
+
+[
+    (
+        fan: CPU,
+        pwm: (2, 22, 30, 43, 56, 68, 89, 102),
+        temp: (48, 53, 57, 60, 63, 65, 70, 76),
+        enabled: false,
+    ),
+    (
+        fan: GPU,
+        pwm: (2, 22, 33, 45, 58, 71, 94, 107),
+        temp: (48, 53, 57, 60, 63, 65, 70, 76),
+        enabled: false,
+    ),
+]

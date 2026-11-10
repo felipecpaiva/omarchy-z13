@@ -1,0 +1,8 @@
+profile,phase,cpu_fan_rpm,gpu_fan_rpm,tctl_c,epp,platform_profile,avg_mhz
+power-saver,idle,2300,2800,49.1,power,quiet,1555
+power-saver,load,2800,3216,65.4,power,quiet,2930
+balanced,idle,3100,3600,51.1,balance_power,balanced,2229
+balanced,load,3316,3700,67.4,balance_power,balanced,2985
+performance,idle,3983,4383,48.8,performance,performance,2589
+performance,load,4000,4416,63.8,performance,performance,2967
+DONE
