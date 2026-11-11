@@ -136,15 +136,11 @@ Current leaning: A or B while on 4.0.6, then C when 4.5 ships. Undecided until S
 
 These are Z13 settings that worked. Other guides cover most of the same ground, so this is a record.
 
-1. **Power profile follows the charger.** `/etc/udev/rules.d/99-z13-power-profile.rules`:
-
-   ```
-   SUBSYSTEM=="power_supply", KERNEL=="AC0", ATTR{online}=="1", RUN+="/usr/bin/powerprofilesctl set performance"
-   SUBSYSTEM=="power_supply", KERNEL=="AC0", ATTR{online}=="0", RUN+="/usr/bin/powerprofilesctl set balanced"
-   ```
-
-   It runs only when the cable is plugged or unplugged. After a reboot the profile stays at Omarchy's
-   default. Undo: delete the file and run `sudo udevadm control --reload`.
+1. **Power profile: `balanced` on AC.** The udev rule that set `performance` on plug was deleted on 2026-11-09,
+   because `asusd` and Omarchy already set the profile. `asusctl profile set --ac balanced` stops the short
+   `performance` flash on plug (test 3, 2026-11-10). Use `powerprofilesctl launch -p performance -- <cmd>` for
+   heavy jobs. Full record: [power-profile.md](power-profile.md). Undo the asusctl change:
+   `asusctl profile set --ac performance`.
 
 2. **GPU memory: small fixed block, large borrowable pool.** BIOS UMA frame buffer on `Auto` gave 512 MiB
    of fixed video memory. Kernel parameter `ttm.pages_limit=12582912` (48 GiB ceiling, not a reservation)
