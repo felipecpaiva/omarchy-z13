@@ -27,11 +27,7 @@ amixer -c Generic_1 sset Master 100%
 
 Check the card id first with `aplay -l`. Mine is `Generic_1` (the `ALC294 Analog` one, not the HDMI card).
 
-To keep it across reboots, the Z13 runs the same line at login. In `~/.config/hypr/autostart.lua`:
-
-```lua
-o.launch_on_start("amixer -c Generic_1 sset Master 100%")
-```
+To keep it across reboots, the Z13 sets it at login. The line is in "Keep it after a reboot" below.
 
 Limit: the card is picked by its id. If the card order ever swaps, the line will hit the wrong card.
 
@@ -44,15 +40,34 @@ At 100% `Master` and 100% system volume, YouTube was fine but a bit low. I raise
 wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 1.1
 ```
 
-To keep it across reboots, add a second line to `~/.config/hypr/autostart.lua`. The delay lets WirePlumber
-restore its own saved volume first. I have not tested it from a fresh login yet:
-
-```lua
-o.launch_on_start("sh -c 'sleep 5; wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 1.1'")
-```
+This is also in the login line below.
 
 I did not go higher, because speakers tend to distort above about
 130%.
+
+## No sound at all: Speaker and Headphone at 0% (2026-11-14)
+
+Kernel 7.2.15. One day there was no sound. The system volume was 100% and not muted. The cause was two
+more hidden controls on the same card: `Speaker` and `Headphone` were both at 0% and switched off. The
+system also said headphones were plugged in. I do not know what set them to 0%. My guess is a jack event
+or a wake from sleep.
+
+These controls are steep. At 60% they are at -26 dB, so sound is very quiet. Set them to 100% (0 dB):
+
+```
+for c in Master Speaker Headphone; do amixer -c Generic_1 sset $c 100% unmute; done
+```
+
+## Keep it after a reboot
+
+One line in `~/.config/hypr/autostart.lua` sets all three controls to 100% and the system volume to 110%.
+The delay lets WirePlumber restore its own saved state first, so it does not undo the change:
+
+```lua
+o.launch_on_start("sh -c 'sleep 5; for c in Master Speaker Headphone; do amixer -q -c Generic_1 sset $c 100% unmute; done; wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 1.1'")
+```
+
+Not tested yet from a fresh login. It fixes the levels only at login, not if they drop again later.
 
 ## Side finding: amp errors
 
