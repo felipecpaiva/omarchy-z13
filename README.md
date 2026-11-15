@@ -60,6 +60,7 @@ section of [docs/plan.md](docs/plan.md).
 | [docs/cursor-lag-after-resume.md](docs/cursor-lag-after-resume.md) | Choppy cursor after sleep: the `amdgpu` panel replay error in the log, the kernel option that fixed it, and what I did not prove |
 | [docs/power-profile.md](docs/power-profile.md) | Power profiles and fans: `performance` on AC runs the fans hard, CPU and GPU measurements per profile, `powerprofilesctl launch` for performance on demand, a fan curve I tried and rolled back, and what I did not prove |
 | [docs/upstream-power-profile.md](docs/upstream-power-profile.md) | The report for Omarchy on the power profile findings, with the posted text and links (posted 2026-11-10) |
+| [docs/plugins.md](docs/plugins.md) | Plugins I run on the Z13: Lock Screen Explorer (and the four lock screen plugins I compared it with, none has an on-screen keyboard), Mission Control with my gestures and patches, and Spaces |
 | [docs/plan.md](docs/plan.md) | Where I stopped, what to do next on this machine with rollback, and the upstream track |
 
 The only scripts are the measurement ones in [scripts/power-profile/](scripts/power-profile/), and they have

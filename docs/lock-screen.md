@@ -69,6 +69,12 @@ same hardware.
 Chosen so far: option 5 first (the upstream post, see [upstream.md](upstream.md)). Option 3 is the
 fallback if upstream stays silent. The owner decides on 2026-11-15. Not started.
 
+## Update 2026-11-15: a lock screen plugin, still no keyboard
+
+I installed Lock Screen Explorer, a community lock screen plugin, after comparing it with four
+others. None of the five has an on-screen keyboard, so the problem above stays open. Details, the
+comparison and how to remove it: [plugins.md](plugins.md).
+
 ## The login ladder, and what other systems do
 
 Windows Hello and phone lock screens use the same order: biometrics first, then a PIN, then the
