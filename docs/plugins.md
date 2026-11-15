@@ -48,8 +48,8 @@ What I saw `[tested here]`:
 - No errors from bare `Color.*` uses, the Qt 6.12 problem that made an older copy of this plugin
   log errors on another machine.
 
-Not checked yet: unlock with the password on a real lock. Keep a text screen (`Ctrl+Alt+F3`) logged
-in for the first try.
+- Lock and unlock with the password worked several times on 2026-11-15. For a first try on your own
+  machine, keep a text screen (`Ctrl+Alt+F3`) logged in.
 
 ### Do not use
 
@@ -138,5 +138,5 @@ good touch target with the keyboard off.
 
 ## Not checked
 
-- Password unlock with Lock Screen Explorer on a real lock.
+- Lock Screen Explorer after sleep with the keyboard detached (it cannot work today, no keyboard).
 - Any of these plugins on Omarchy versions other than 4.5.0-3.
