@@ -105,7 +105,7 @@ on the overview works. Touch screen gestures need `hyprgrass`, see [minimal.md](
 
 ### Local patches, sent upstream
 
-My installed copy carries four changes, each sent as a pull request:
+My installed copy carries five changes, each sent as a pull request:
 
 | PR | Change |
 |---|---|
@@ -113,6 +113,7 @@ My installed copy carries four changes, each sent as a pull request:
 | [#2](https://github.com/henriSchulz/omarchy-mission-control/pull/2) | Overlapping floating windows are spread out |
 | [#3](https://github.com/henriSchulz/omarchy-mission-control/pull/3) | A tap closes the overview in 140 ms with no wait. The swipe is unchanged. |
 | [#4](https://github.com/henriSchulz/omarchy-mission-control/pull/4) | White overview text gets a thin dark outline, so it reads on a light wallpaper |
+| [#6](https://github.com/henriSchulz/omarchy-mission-control/pull/6) | A tapped window on the same desktop gets focus, not only the front. Before, scrolling went to the old window until one more tap. |
 
 The patch is a local commit on a `local-patches` branch in the plugin folder. A plugin update then
 cannot fast forward and stops with an error, so it cannot delete the patch. My post-update hook also
