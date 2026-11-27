@@ -58,18 +58,24 @@ section of [docs/plan.md](docs/plan.md).
 | [docs/audio.md](docs/audio.md) | Quiet speakers: the hidden `Master` volume at 69%, the fix, and the right-amp errors I saw |
 | [docs/side-button.md](docs/side-button.md) | The Z13's side button (confirmed as `XF86Launch3`): the live test, what other setups do with it, prior art for a button mapper, a design for one, and the one line applied so far (the button opens the Omarchy menu) |
 | [docs/cursor-lag-after-resume.md](docs/cursor-lag-after-resume.md) | Choppy cursor after sleep: the `amdgpu` panel replay error in the log, the kernel option that fixed it, and what I did not prove |
+| [docs/battery-threshold-uevent-loop.md](docs/battery-threshold-uevent-loop.md) | A battery-limit udev rule that loops at about 196 events per second after a resume: the 30 second diagnosis, the fix, the tests, and what is not proven |
+| [docs/power-audit-2026-11-27.md](docs/power-audit-2026-11-27.md) | The full power and resource audit of 2026-11-27: the loop above, the services I turned off, and the resume and reboot checks still to do |
 | [docs/power-profile.md](docs/power-profile.md) | Power profiles and fans: `performance` on AC runs the fans hard, CPU and GPU measurements per profile, `powerprofilesctl launch` for performance on demand, a fan curve I tried and rolled back, and what I did not prove |
 | [docs/upstream-power-profile.md](docs/upstream-power-profile.md) | The report for Omarchy on the power profile findings, with the posted text and links (posted 2026-11-10) |
 | [docs/plugins.md](docs/plugins.md) | Plugins I run on the Z13: Lock Screen Explorer (and the four lock screen plugins I compared it with, none has an on-screen keyboard), Mission Control with my gestures and patches, and Spaces |
 | [docs/plan.md](docs/plan.md) | Where I stopped, what to do next on this machine with rollback, and the upstream track |
 
-The only scripts are the measurement ones in [scripts/power-profile/](scripts/power-profile/), and they have
-run on a real Z13.
+The scripts are the measurement ones in [scripts/power-profile/](scripts/power-profile/) and the battery-loop
+ones in [scripts/battery-loop/](scripts/battery-loop/): a test that needs root and a low-cost logger.
+They have run on a real Z13.
 
 ## Device this was checked on
 
 ASUS ROG Flow Z13 (2025), GZ302EA. Omarchy 4.0.6-1, Hyprland 0.56.2-4, Quickshell 0.3.2,
 iio-sensor-proxy 3.9-1, kernel 7.2.8-9-omarchy. Other Z13 revisions may differ.
+
+The battery-loop material was measured on the same model: BIOS GZ302EA.314, Omarchy 4.5.0, kernel
+7.2.15-4-omarchy.
 
 ## Help wanted
 
