@@ -129,7 +129,8 @@ kernel `7.2.15-4-omarchy`.
   `^KERNEL` count and added 1 to every script count.
 - After the test: no test rule left, `asusd` active, threshold 85.
 
-Open: that the 85 limit survives a **suspend and resume** and a **reboot**. The resume check has to
+The 85 limit had to survive a **suspend and resume** and a **reboot**; both were checked on
+2026-11-28 (results under "Reboot and resume checks" below). The resume check has to
 be the charging one: on AC with the battery at or above the limit,
 `cat /sys/class/power_supply/BAT0/status` must read `Not charging`, because charging would continue
 past 85 if the limit were lost. `charge_control_end_threshold` cannot fail that check: it returns the
@@ -179,8 +180,8 @@ to wonder about.
 |---|---|---|
 | `print-applet` autostart | not running | Already off: `~/.config/autostart/print-applet.desktop` has `Hidden=true`. `lpstat` shows no printers. |
 | `geoclue` demo agent | 3.7 MB | **Off.** `~/.config/autostart/geoclue-demo-agent.desktop` with `Hidden=true`, and the running `app-geoclue\x2ddemo\x2dagent@autostart.service` was stopped. The `geoclue` system service stays available on demand. Undo: delete that file. |
-| `cupsd` | listens on `127.0.0.1:631` and `[::1]:631` only | **Off, sudo pending.** No printer is configured and no package requires `cups`. Run `sudo systemctl disable --now cups.service cups.socket cups.path`. Undo: `sudo systemctl enable --now cups.socket cups.path`. |
-| `passim` (`passimd`) | 6.5 MB | **Off, sudo pending.** It is the owner of the `0.0.0.0:27500/tcp` listener (below). Only `fwupd` uses it, and `fwupd` works without it. Run `sudo systemctl mask --now passim.service`. Undo: `sudo systemctl unmask passim.service`. |
+| `cupsd` | listens on `127.0.0.1:631` and `[::1]:631` only | **Off since 2026-11-28.** No printer is configured and no package requires `cups`. Ran `sudo systemctl disable --now cups.service cups.socket cups.path`; `systemctl is-active cups.service` says `inactive`. Undo: `sudo systemctl enable --now cups.socket cups.path`. |
+| `passim` (`passimd`) | 6.5 MB | **Off since 2026-11-28.** It is the owner of the `0.0.0.0:27500/tcp` listener (below). Only `fwupd` uses it, and `fwupd` works without it. Ran `sudo systemctl mask --now passim.service`; `systemctl is-active passim.service` says `inactive`. Undo: `sudo systemctl unmask passim.service`. |
 | `localsearch-3` | 14 MB, a file indexer | Kept. `nautilus` requires it for file search. |
 | Evolution alarm notifier autostart | not measured | Kept (my choice). |
 | `goa-daemon`, `evolution-source-registry`, `goa-identity-service` | about 35 MB | Kept: `gnome-control-center` requires GNOME online accounts, and the Google Calendar sync uses a Google account there. (The first audit said nothing used them; that was wrong.) |
@@ -203,8 +204,8 @@ to wonder about.
 `sudo ss -ltnp | grep 27500` (mine, 2026-11-27) showed `passimd`, pid 858216: the firmware
 metadata sharing daemon (`passim`) listening on all interfaces. It is by design (it shares firmware
 metadata with other machines on the LAN), not a leak. Masking `passim` (above) closes the port.
-After the sudo line, check: `ss -ltn | grep 27500` prints nothing. (`sshd` on `0.0.0.0:22` is
-expected.)
+Checked 2026-11-28: `cups` and `passim` inactive, and `ss -ltn | grep 27500` prints nothing.
+(`sshd` on `0.0.0.0:22` is expected.)
 
 ## Status at the end of 2026-11-27
 
@@ -214,23 +215,26 @@ expected.)
 | Battery uevent loop | Cause found and removed: the old `99-battery-limit.rules`. `asusd` holds 85. Detail above and in [battery-threshold-uevent-loop.md](battery-threshold-uevent-loop.md) |
 | Detection check | A small check warns on a hot long-running process or a kernel uevent rate of 50 per second or more; I run mine from private tooling |
 | Soak logger | Running: user timer `z13-uevent-soak`, one sample per 5 minutes for 48 h (see below) |
-| Findings 3 to 5 | Decided: geoclue demo agent off; `cups` and `passim` off after the sudo lines (pending); the rest of the services kept. Memory (finding 3) not acted on |
+| Findings 3 to 5 | Decided and applied: geoclue demo agent off (2026-11-27); `cups` disabled and `passim` masked (2026-11-28); the rest of the services kept. Memory (finding 3) not acted on |
 
-## Still to do: resume and reboot checks (the loop is not closed until these pass)
+## Still to do: resume and reboot checks (updated 2026-11-28, results in the next section)
 
-These need the machine used normally and rebooted, so they were left for a later session.
+These needed the machine used normally and rebooted; they were run on 2026-11-28.
 
-1. **Resumes without the rule.** The original storm began at a resume. Suspend the Z13 a few times,
+1. **Resumes without the rule.** **Done 2026-11-28:** three resumes, the longest 10 h 45 min (next
+   section). The check was: the original storm began at a resume, so suspend the Z13 a few times,
    at least one long (an hour or more), then run `bash scripts/battery-loop/battery-soak.sh report`.
    Clean means `STORM lines: 0`, a maximum of a few events per 3 s sample (0 is normal; plugging in
    AC adds a burst of its own, because every `power_supply` device is counted) and no sustained 30
    or more, and the thresholds seen all 85. The report only says clean for resumes that have a
    sample after them. The logger also sends a critical desktop notification if a storm appears.
-2. **Charging stops at the limit after a resume.** On AC with the battery at or above 85,
+2. **Charging stops at the limit after a resume.** **Done 2026-11-28:** `Not charging` after each of
+   the three resumes. On AC with the battery at or above 85,
    `cat /sys/class/power_supply/BAT0/status` must read `Not charging`; charging would continue past
    85 if the limit were lost. Do not use `charge_control_end_threshold` here: it returns the
    driver's cached last write, so it cannot show that the limit survived the resume.
-3. **Reboot.** A transient user timer does not survive a reboot. After rebooting:
+3. **Reboot.** **Done 2026-11-28 at 00:36:** all checks PASS (next section). A transient user timer
+   does not survive a reboot. The checks were:
    - `cat /sys/class/power_supply/BAT0/charge_control_end_threshold` must show `85` with `asusd`
      as the only writer. This check is valid: the driver resets the limit to 100 when the battery
      is added, so `85` proves `asusd` restored it.
@@ -251,30 +255,73 @@ These need the machine used normally and rebooted, so they were left for a later
    the kernel version, and the output of
    `timeout 6 udevadm monitor --kernel -s power_supply > /tmp/ev.txt; head -40 /tmp/ev.txt`, and
    reopen this audit (systemd issue 21751 is the closest known report).
-5. **When Omarchy ships its charge limit.** Upstream `omacom/omarchy` has
+5. **When Omarchy ships its charge limit.** **Open.** Upstream `omacom/omarchy` has
    `bin/omarchy-battery-limit` since PR #20379; it enables the limit through UPower, which makes
    `upowerd` a threshold writer. Enable it here when it arrives and re-run the trigger test from
    this audit to see whether UPower's writes can loop on the Z13.
-6. **After the checks pass, delete the backup.** `~/99-battery-limit.rules.off` is the original rule
-   kept as a backup and owned by root (it was moved with `sudo`):
-   `sudo rm ~/99-battery-limit.rules.off`.
-7. **When all of the above pass:** stop the logger
-   (`bash scripts/battery-loop/battery-soak.sh stop`), post the notes where the shareable doc says
-   (nothing has been posted), and mark this closed.
+6. **After the checks pass, delete the backup.** **Done 2026-11-28.** `~/99-battery-limit.rules.off`
+   was the original rule, kept as a backup (it was moved with `sudo`) and owned by root;
+   `sudo rm ~/99-battery-limit.rules.off` was run and the file is gone. `/etc/udev/rules.d` now
+   holds only `60-omarchy-io-scheduler.rules` and `99-omarchy-asus-z13-touchpad.rules`.
+7. **Remaining.** Two things: the decision on where to post the notes (the shareable doc's venues
+   table lists the candidates; nothing is posted yet), and the re-test when Omarchy ships the
+   `bin/omarchy-battery-limit` from PR #20379. Then stop the logger
+   (`bash scripts/battery-loop/battery-soak.sh stop`) and mark this closed.
 
 The soak logger was started by hand earlier in the session and restarted from this repo script at
 23:05 on 2026-11-27 (`battery-soak.sh start 48`); the log continues.
 
+## Reboot and resume checks (2026-11-28)
+
+Same machine: `GZ302EA`, BIOS `GZ302EA.314`, Omarchy 4.5.0-3, kernel `7.2.15-4-omarchy`, on AC
+with the battery at 85%. All numbers are measured.
+
+### Reboot at 00:36
+
+`bash scripts/battery-loop/battery-soak.sh postboot` reported every check PASS:
+
+| Check | Result |
+|---|---|
+| Battery-limit rule in `/etc/udev/rules.d` or `/run/udev/rules.d` | none |
+| `BAT0/charge_control_end_threshold` | `85`, with `asusd` as the only writer. The driver resets the value to 100 when the battery is added at boot, so `85` shows `asusd` restored it |
+| `BAT0/status` on AC at 85% | `Not charging`, so charging stopped at the limit |
+| `asusd` | active |
+| `power_supply` kernel events in 3 s | 0 |
+| Busiest process | 12.9%, a normal one |
+| `upowerd` and `asusd` CPU | 0.2% each |
+
+### Resumes without the rule
+
+Three `s2idle` suspends, no battery-limit rule installed:
+
+| Suspend | Duration | After the resume |
+|---|---|---|
+| 2026-11-27 23:29:27 to 23:30:20 | 53 s | 0 `BAT0` kernel events in 6 s, limit 85, status `Not charging`, `upowerd` and `asusd` 0% CPU over 5 s, no `udev-worker` process |
+| 2026-11-27 23:31:23 to 23:34:36 | 3 min 13 s | the same |
+| 2026-11-28 00:54:12 to 11:39:55 | 10 h 45 min | the same |
+
+`bash scripts/battery-loop/battery-soak.sh report` after the overnight suspend: 31 samples, a
+maximum of 1 event in a 3 s sample, 0 `STORM` lines, limit 85 in all 31 samples, and
+`RESULT: clean across 3 resume(s)`. The maximum of 1 is the monitor banner, not an event: the first
+6 samples were written before the script stopped counting that line, so in those samples a reading
+of 1 means 0 (the same offset the test table notes above).
+
+The 10 h 45 min suspend is the comparable case: the 27-hour storm followed a 1.5 h suspend, and the
+older stuck worker followed a 16 h one. What this does not show: it is one machine and one long
+suspend. The logger keeps running for its 48 h.
+
 ## Not done
 
-- `sudo systemctl disable --now cups.service cups.socket cups.path` and
-  `sudo systemctl mask --now passim.service` are run by hand; then check `ss -ltn | grep 27500`
-  prints nothing and `systemctl is-active cups.service passim.service` says inactive.
+- Nothing about `cups` or `passim` is pending: both were disabled or masked by hand on 2026-11-28,
+  `systemctl is-active cups.service passim.service` says `inactive` for both, and
+  `ss -ltn | grep 27500` prints nothing.
 - Finding 3 (memory held by Chrome, the coding-agent sessions, `quickshell`, Slack, the terminal
   multiplexer) is not acted on.
-- The changes on the Z13 were: the udev rule moved away (by me), the local LLM server stopped, and
-  the geoclue demo agent autostart hidden. Nothing else was changed.
-- The limit surviving a suspend and a reboot is not yet observed (see the charging and reboot
-  checks above).
+- The changes on the Z13 were: the udev rule moved away and its backup deleted (by me), the local
+  LLM server stopped, the geoclue demo agent autostart hidden, `cups` disabled and `passim` masked.
+  Nothing else was changed.
+- Which component emits the extra `change` event that feeds the loop is still unidentified (see
+  [battery-threshold-uevent-loop.md](battery-threshold-uevent-loop.md)).
+- Nothing has been posted anywhere yet; where to post is item 7 above.
 - Battery draw on battery power was not measured (the machine was on AC), so the watt saving is an
   estimate from CPU time: about one core of mostly kernel time.
