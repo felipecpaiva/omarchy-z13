@@ -6,9 +6,10 @@ server. I turned the local LLM server off on the Z13 to save battery; it starts 
 share one cause, which was found and removed the same day (see "Result"). Findings 3 to 5 got
 decisions the same day (see "Findings 3 to 5").
 
-Everything below was measured on 2026-11-27 on kernel `7.2.15-4-omarchy`, AC connected, battery at
-the 85% charge limit. There is no passwordless sudo on this machine, so the root-side steps are run
-by hand. Watt figures are estimates; CPU, event and time numbers are measured.
+Everything below was measured on 2026-11-27 and 2026-11-28 on kernel `7.2.15-4-omarchy`, AC
+connected, battery at the 85% charge limit. There is no passwordless sudo on this machine, so the
+root-side steps are run by hand. Watt figures are estimates; CPU, event and time numbers are
+measured.
 
 ## Findings 1 and 2: one battery uevent loop burns about one core
 
@@ -129,6 +130,30 @@ kernel `7.2.15-4-omarchy`.
   `^KERNEL` count and added 1 to every script count.
 - After the test: no test rule left, `asusd` active, threshold 85.
 
+### Test 4 (I ran it): a guarded rule
+
+Script: [battery-guard-test.sh](../scripts/battery-loop/battery-guard-test.sh) (`sudo bash`, about
+40 s, removes its test rule and restores the starting threshold on exit). The rule was
+`ACTION=="add|change", SUBSYSTEM=="power_supply", KERNEL=="BAT0", ATTR{charge_control_end_threshold}!="85", ATTR{charge_control_end_threshold}="85"`
+in `/run/udev/rules.d`, one `udevadm trigger --action=change` on `BAT0` per test, starting threshold
+85. Run 2026-11-28 11:48.
+
+| Test | Rule | Value before the trigger | Trigger | Events in 7 s |
+|---|---|---|---|---|
+| G0 | guarded `add\|change` | 85, so nothing to write | `change` | 1 |
+| G1 | guarded `add\|change` | 80, so one write needed | `change` | 2 |
+
+- The guard works by avoiding the write: with nothing to write, G0 is at the T0 baseline; one
+  corrective write costs one extra event (G1), and the threshold ended at 85 both times. That
+  matches the "one write, one extra `change`" reading from T3.
+- No storm in either case: 0 events in the 3 s after the rule was removed, and no test rule left.
+  The unguarded rule was 1176 events in 7 s (T1).
+- One run on one machine, and a triggered `change` is not a resume or a hibernation. What feeds the
+  extra event is still unidentified (T3). Removing the rule and letting `asusd` hold the limit stays
+  the preferred fix; the guarded form is the tested alternative for a machine with no other limit
+  writer, or for a `change` rule that re-applies the limit after hibernation (the ArchWiki ASUS page
+  says hibernation resets it).
+
 The 85 limit had to survive a **suspend and resume** and a **reboot**; both were checked on
 2026-11-28 (results under "Reboot and resume checks" below). The resume check has to
 be the charging one: on AC with the battery at or above the limit,
@@ -150,7 +175,7 @@ Set the limit with the tool that owns it: `asusctl battery limit 85` (stored in
 | | Change | Status |
 |---|---|---|
 | A | Delete the udev rule; `asusd` applies 85 | **Done 2026-11-27** (file moved to `~/99-battery-limit.rules.off`) |
-| B | Keep the rule but only for `ACTION=="add"` | Not needed while `asusd` holds the limit; the fallback for a machine without `asusd` |
+| B | Keep the rule but only for `ACTION=="add"` | Not needed while `asusd` holds the limit; the fallback for a machine without `asusd`. The guarded `add\|change` form (`ATTR{charge_control_end_threshold}!="85"` before the write) is the tested alternative when a rule must also react to `change` (Test 4) |
 | C | Kernel or `asusctl` update and an upstream report | Not needed: the events stopped without the rule |
 | D | Detection so a repeat is seen in minutes: a small check that warns on a hot long-running process or a kernel uevent rate of 50 per second or more; I run mine from private tooling | **Built.** The loop ran 27 hours unnoticed |
 | E | A root watchdog that kills a hot `udev-worker` | Skipped: it hides the cause |
@@ -264,7 +289,8 @@ These needed the machine used normally and rebooted; they were run on 2026-11-28
    `sudo rm ~/99-battery-limit.rules.off` was run and the file is gone. `/etc/udev/rules.d` now
    holds only `60-omarchy-io-scheduler.rules` and `99-omarchy-asus-z13-touchpad.rules`.
 7. **Remaining.** Two things: the decision on where to post the notes (the shareable doc's venues
-   table lists the candidates; nothing is posted yet), and the re-test when Omarchy ships the
+   table lists the candidates; nothing is posted yet, and its ArchWiki row is no longer blocked
+   since the guarded rule was tested on 2026-11-28, Test 4), and the re-test when Omarchy ships the
    `bin/omarchy-battery-limit` from PR #20379. Then stop the logger
    (`bash scripts/battery-loop/battery-soak.sh stop`) and mark this closed.
 

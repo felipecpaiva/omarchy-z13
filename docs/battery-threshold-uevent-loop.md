@@ -53,6 +53,8 @@ It reacts to `change` events and writes to the same device.
 | Old rule, `asusd` **stopped** | 1176 events in 7 s: the loop does not need `asusd` |
 | Add-only rule, one `change` trigger | 1 event: no loop |
 | Add-only rule, one `add` trigger | 2 events: no loop |
+| Guarded rule (`!=` before the write), value already 85, one `change` trigger | 1 event in 7 s, threshold 85; 0 events in the 3 s after the rule was removed: nothing to write, no loop |
+| Guarded rule, value set to 80 first (one write needed), one `change` trigger | 2 events in 7 s, threshold back to 85; 0 events in the 3 s after removal: one corrective write, no loop |
 | Charge limit after removal | still 85, held by `asusd` (`asusctl battery limit 85`) |
 | Reboot with the rule absent (2026-11-28 at 00:36) | 0 `power_supply` kernel events in 3 s; limit `85` restored by `asusd` (the driver resets it to 100 when the battery is added at boot); `BAT0` status `Not charging` on AC at 85%; `upowerd` and `asusd` at 0.2% CPU each |
 | Three `s2idle` resumes without the rule: 53 s, 3 min 13 s, and 10 h 45 min (2026-11-27 and 2026-11-28) | after each: 0 `BAT0` kernel events in 6 s, limit 85, status `Not charging`, `upowerd` and `asusd` at 0% CPU over 5 s, no `udev-worker` process |
@@ -62,7 +64,9 @@ Rate and shape were the same in the 27-hour storm that began at a resume and in 
 Hand counts in this table matched `change` lines only; the 7 s rows come from the test script, which
 counts `^KERNEL\[` lines with the monitor banner excluded, so they differ by one from an unfiltered
 count. Test script: [battery-uevent-loop-test.sh](../scripts/battery-loop/battery-uevent-loop-test.sh)
-(needs `sudo`, about a minute, removes its test rule on exit).
+(needs `sudo`, about a minute, removes its test rule on exit). Guarded-rule test:
+[battery-guard-test.sh](../scripts/battery-loop/battery-guard-test.sh) (needs `sudo`, about 40 s,
+removes its test rule and restores the starting threshold on exit).
 
 ## Not proven
 
@@ -72,6 +76,10 @@ count. Test script: [battery-uevent-loop-test.sh](../scripts/battery-loop/batter
   firmware (the embedded controller notifies the ACPI battery driver after the write). Not verified.
 - **Why it began at a resume, and only at some resumes.** Presumably a `change` event at resume
   reaches the rule. Of the three resumes checked in the journal, two were followed by a stuck worker.
+- **The guarded rule at a resume or a hibernation.** The `!=` guard was measured on my Z13 only, in
+  one run: two triggered `change` events, quiet, threshold correct. That is not a real resume, not a
+  hibernation, and not a second machine. What it does show is that a `change` event that reaches a
+  guarded rule does not start a storm, which is the only claim made for the guard.
 - **Other hardware.** Only the Z13 was tested. Similar storms are reported without any custom rule:
   [systemd issue 21751](https://github.com/systemd/systemd/issues/21751) is a `BAT0` storm on a
   Dell Latitude after wake, cleared by restarting `systemd-udevd.service` and both udevd sockets
@@ -110,7 +118,12 @@ What that changes here:
   On the Z13 my reading of `asus-wmi.c` `charge_control_end_threshold_store` found no
   `power_supply_changed()`, so which component re-emits the event here is still unproven (see
   "Not proven").
-- Their `!=` guard is their fix; I have not tested it on the Z13 (see "Fix").
+- Their `!=` guard is their fix, and it behaves the same way on the Z13, measured on 2026-11-28 on
+  my machine only, one run: with the guarded rule installed and the threshold already 85, one
+  `change` trigger made 1 event in 7 s; with the threshold set to 80 first, so the rule had to
+  write once, 2 events in 7 s and the threshold went back to 85; the 3 s after the rule was removed
+  were clean in both cases. The unguarded rule made 1176 events in 7 s in the same test harness. So
+  the guard works by not writing when the value already matches (see "Fix").
 - Their diagnostic is the same one used below, and it carries extra evidence: they counted with
   `udevadm monitor --kernel`, stopping UPower did not stop the stream, and unloading the battery
   driver did (that removes `BAT0` as well, so it only bounds the source). That supports the
@@ -137,13 +150,35 @@ What that changes here:
    returns the driver's cached last write. After a reboot it does: the driver resets the limit to
    100 when the battery is added, so `85` means `asusd` restored it.
 
-Reported alternative to removing the rule, **not tested on the Z13**: keep a rule that reacts to
-`change` but guard the write so it only runs when the value differs, for example
-`ATTR{charge_control_end_threshold}!="85"`. The reporter of
-[omacom/omarchy#20162](https://github.com/omacom/omarchy/issues/20162) fixed their loop that way
-(0 `BAT0` uevents per second after `udevadm control --reload`). I did not test it here: removing the
-rule was enough, and `asusd` already holds the limit. If nothing else sets the limit, this is the
-form to try; if `asusd` or TLP owns it, remove the rule instead.
+Removing the rule and letting `asusd` hold the limit stays the preferred fix. A tested alternative,
+for a machine that wants a rule that reacts to `change` as well, is to guard the write so it only
+runs when the value differs:
+
+```
+ACTION=="add|change", SUBSYSTEM=="power_supply", KERNEL=="BAT0", ATTR{charge_control_end_threshold}!="85", ATTR{charge_control_end_threshold}="85"
+```
+
+Measured on my Z13 on 2026-11-28, one run on one machine, starting threshold 85, counts as
+`^KERNEL\[` lines of a redirect-to-file capture in a 7 s window:
+
+| Case | Events in 7 s | Threshold after |
+|---|---|---|
+| G0: value already 85, the rule has nothing to write | 1 | 85 |
+| G1: value set to 80 first, so the rule must write once | 2 | 85 |
+
+In both cases the 3 s after the rule was removed were clean and no test rule was left. The unguarded
+rule in the same harness: 1176 events in 7 s. The guard works because it avoids the write when the
+value already matches, and one write costs one extra event; what turns that event into a loop is
+still the unidentified re-emitter above. The reporter of
+[omacom/omarchy#20162](https://github.com/omacom/omarchy/issues/20162) fixed their loop the same way
+(0 `BAT0` uevents per second after `udevadm control --reload`), on different hardware and a
+different battery driver. Script: [battery-guard-test.sh](../scripts/battery-loop/battery-guard-test.sh).
+
+Why keep a `change` rule at all: the
+[ArchWiki ASUS page](https://wiki.archlinux.org/title/Laptop/ASUS#udev_rule) says the charge limit
+resets after hibernation, and a rule that reacts to `change` re-applies the limit at the next
+battery event with no service of its own. That is the case where the guarded form beats the add-only
+one. If `asusd` or TLP owns the limit, remove the rule instead.
 
 Restarting `systemd-udevd.service` and both udevd sockets ends a storm temporarily:
 `sudo systemctl restart systemd-udevd.service systemd-udevd-control.socket systemd-udevd-kernel.socket`.
@@ -163,14 +198,14 @@ reaches the rule starts it again.
 ## Where this could be shared (nothing has been posted yet; waiting for my decision)
 
 Order of preference: the closed issue first (same root cause, a second data point from other
-hardware and a different battery driver, and the Z13 results in one place), then the wiki note once
-the `!=` guard has been tested here. Not asus-linux (`asusd` is not required for the loop) and not
+hardware and a different battery driver, and the Z13 results in one place), then the wiki note, which
+the guarded-rule test now unblocks. Not asus-linux (`asusd` is not required for the loop) and not
 systemd (not their bug).
 
 | Place | What to post | Status |
 |---|---|---|
-| Comment on [omacom/omarchy#20162](https://github.com/omacom/omarchy/issues/20162) | A short note: same root cause on the Z13, on different hardware and a different battery driver; removal and the add-only form tested, `asusd` not required; their `!=` guard untested here. It is one rule pattern, not an Omarchy problem | Not posted yet; waiting for the decision |
-| [ArchWiki Laptop/ASUS](https://wiki.archlinux.org/title/Laptop/ASUS#udev_rule), "udev rule" section | A note that a rule that reacts to `change` and writes the threshold can loop, citing #20162 and my tests, with the add-only `BAT0` rule as the tested safe form | Not posted yet; waiting until the `!=` guard is tested on the Z13 |
+| Comment on [omacom/omarchy#20162](https://github.com/omacom/omarchy/issues/20162) | A short note: same root cause on the Z13, on different hardware and a different battery driver; removal and the add-only form tested, `asusd` not required; their `!=` guard also tested here, quiet (1 and 2 events in 7 s). It is one rule pattern, not an Omarchy problem | Not posted yet; waiting for the decision |
+| [ArchWiki Laptop/ASUS](https://wiki.archlinux.org/title/Laptop/ASUS#udev_rule), "udev rule" section | A note that a rule that reacts to `change` and writes the threshold can loop, citing #20162 and my tests, with the add-only `BAT0` rule as the tested safe form and the guarded `change` rule as the tested alternative for re-applying the limit after hibernation | Not posted yet; the `!=` guard is tested here (2026-11-28), so this is no longer blocked |
 | Kernel `platform-driver-x86` / ACPI battery, or ASUS firmware contacts | The 7-second tests with event counts: a threshold write seems to produce one extra `change`. Not `asusd` | Not posted yet; only if someone can trace what emits the extra event (needs root, not done here) |
 | Not recommended: asus-linux, systemd | `asusd` is not required for the loop, and nothing here is a systemd bug | Dropped |
 
