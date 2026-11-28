@@ -195,7 +195,7 @@ reaches the rule starts it again.
 | Software | systemd 262.1, upower 1.91.5, asusctl/asusd 6.5.0 |
 | Omarchy involvement | none on 4.5.0: I added the rule by hand and Omarchy 4.5.0 ships no charge-limit rule or feature. Upstream's default branch has `bin/omarchy-battery-limit` since PR #20379, which uses UPower (see "Not proven") |
 
-## Where this could be shared (nothing has been posted yet; waiting for my decision)
+## Where this could be shared
 
 Order of preference: the closed issue first (same root cause, a second data point from other
 hardware and a different battery driver, and the Z13 results in one place), then the wiki note, which
@@ -204,8 +204,8 @@ systemd (not their bug).
 
 | Place | What to post | Status |
 |---|---|---|
-| Comment on [omacom/omarchy#20162](https://github.com/omacom/omarchy/issues/20162) | A short note: same root cause on the Z13, on different hardware and a different battery driver; removal and the add-only form tested, `asusd` not required; their `!=` guard also tested here, quiet (1 and 2 events in 7 s). It is one rule pattern, not an Omarchy problem | Not posted yet; waiting for the decision |
-| [ArchWiki Laptop/ASUS](https://wiki.archlinux.org/title/Laptop/ASUS#udev_rule), "udev rule" section | A note that a rule that reacts to `change` and writes the threshold can loop, citing #20162 and my tests, with the add-only `BAT0` rule as the tested safe form and the guarded `change` rule as the tested alternative for re-applying the limit after hibernation | Not posted yet; the `!=` guard is tested here (2026-11-28), so this is no longer blocked |
+| Comment on [omacom/omarchy#20162](https://github.com/omacom/omarchy/issues/20162) | A short note: same root cause on the Z13, on different hardware and a different battery driver; removal and the add-only form tested, `asusd` not required; their `!=` guard also tested here, quiet (1 and 2 events in 7 s). It is one rule pattern, not an Omarchy problem | Posted 2026-11-28: [my comment](https://github.com/omacom/omarchy/issues/20162#issuecomment-7236466497) |
+| [ArchWiki Laptop/ASUS](https://wiki.archlinux.org/title/Laptop/ASUS#udev_rule), "udev rule" section | A note that a rule that reacts to `change` and writes the threshold can loop, citing #20162 and my tests, with the guarded `change` rule as the tested alternative for re-applying the limit after hibernation | Drafted, not submitted. My new account could not edit the page on 2026-11-28, cause open. Text, evidence and what to check: [archwiki-note-laptop-asus.md](archwiki-note-laptop-asus.md) |
 | Kernel `platform-driver-x86` / ACPI battery, or ASUS firmware contacts | The 7-second tests with event counts: a threshold write seems to produce one extra `change`. Not `asusd` | Not posted yet; only if someone can trace what emits the extra event (needs root, not done here) |
 | Not recommended: asus-linux, systemd | `asusd` is not required for the loop, and nothing here is a systemd bug | Dropped |
 
